@@ -1,6 +1,7 @@
 package game2048;
 
 import java.util.Formatter;
+import java.util.Hashtable;
 import java.util.Observable;
 
 
@@ -77,6 +78,14 @@ public class Model extends Observable {
         return _score;
     }
 
+    /**
+     * Set score
+     * @return void
+     */
+    private void set_score(int newScore) {
+        _score = newScore;
+    }
+
     /** Return the current maximum game score (updated at end of game). */
     public int maxScore() {
         return _maxScore;
@@ -116,8 +125,53 @@ public class Model extends Observable {
      *    and the trailing tile does not.
      */
     public void tilt(Side side) {
-        // TODO: Fill in this function.
 
+        _board.setViewingPerspective(side);
+        Hashtable<Tile, Boolean> MergedTiles = new Hashtable<>();
+
+            for (int x = 0; x < _board.size(); x += 1) {
+                for (int y = _board.size() - 1; y >= 0; y -= 1) {
+                    Tile t = _board.tile(x, y);
+
+                    if (t != null) {
+                        int moveToRow = -1;
+                        boolean shouldMerge = false;
+
+                        for (int rowAbove = y + 1; rowAbove < _board.size(); rowAbove += 1) {
+                            Tile aboveTile = _board.tile(x, rowAbove);
+                            //if the tile above is null, tile t can move there
+                            // continue to check if next is null or merge
+                            if (aboveTile == null) {
+                                moveToRow = rowAbove;
+                                continue;
+                            }
+                            // we are merging if value equals and tile hasn't been merged
+                            if (aboveTile.value() == t.value() && !MergedTiles.containsKey(aboveTile)) {
+                                shouldMerge = true;
+                                moveToRow = rowAbove;
+                                }
+
+                            // is not null, it can or can't merge - no need to check the other rows (tiles can either merge or take up empty space)
+                            break;
+                        }
+
+                        if (shouldMerge) {
+                            _board.move(x, moveToRow, t);
+                            Tile movedT = _board.tile(x, moveToRow);
+
+                            //newScore - add the value of the newly merged tile to total score;
+                            int newScore = score() + movedT.value();
+                            set_score(newScore);
+
+                            MergedTiles.put(movedT, true);
+                        } else if (moveToRow > - 1) {
+                            _board.move(x, moveToRow, t);
+                        }
+                    }
+            }
+        }
+
+        _board.setViewingPerspective(Side.NORTH);
         checkGameOver();
     }
 
