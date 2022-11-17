@@ -3,16 +3,19 @@ package IntList;
 public class IntListExercises {
 
     /**
-     * Part A: (Buggy) mutative method that adds a constant C to each
+     * Part A: A mutative method that adds a constant C to each
      * element of an IntList
      *
      * @param lst IntList from Lecture
      */
     public static void addConstant(IntList lst, int c) {
-        IntList head = lst;
-        while (head.rest != null) {
-            head.first += c;
-            head = head.rest;
+        IntList next = lst.rest;
+
+        lst.first += c;
+
+        while (next != null) {
+            next.first += c;
+            next = next.rest;
         }
     }
 
