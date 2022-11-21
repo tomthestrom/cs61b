@@ -19,8 +19,8 @@ public class TestBuggyAList {
      */
     @Test
     public void testThreeAddThreeRemove() {
-        AListNoResizing <Integer> ALNR = new AListNoResizing<>();
-        BuggyAList <Integer> BAL = new BuggyAList<>();
+        AListNoResizing<Integer> ALNR = new AListNoResizing<>();
+        BuggyAList<Integer> BAL = new BuggyAList<>();
 
         int testVal1 = 3;
         int testVal2 = 4;
@@ -38,5 +38,25 @@ public class TestBuggyAList {
         assertEquals(ALNR.removeLast(), BAL.removeLast());
         assertEquals(ALNR.removeLast(), BAL.removeLast());
         assertEquals(ALNR.removeLast(), BAL.removeLast());
+    }
+
+    @Test
+    public void randomizedTest() {
+        AListNoResizing<Integer> L = new AListNoResizing<>();
+
+        int N = 500;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 2);
+            if (operationNumber == 0) {
+                // addLast
+                int randVal = StdRandom.uniform(0, 100);
+                L.addLast(randVal);
+                System.out.println("addLast(" + randVal + ")");
+            } else if (operationNumber == 1) {
+                // size
+                int size = L.size();
+                System.out.println("size: " + size);
+            }
+        }
     }
 }
