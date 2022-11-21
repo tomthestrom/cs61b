@@ -1,4 +1,5 @@
 package timingtest;
+
 import edu.princeton.cs.algs4.Stopwatch;
 import org.junit.Test;
 
@@ -32,15 +33,15 @@ public class TimeAList {
         //max nr of ops
         int MAX_N = Math.multiplyExact(128, 1000);
 
-        AList Ns = new AList<Integer>();
-        AList times = new AList<Double>();
-        AList opCounts = new AList<Integer>();
+        AList<Integer> Ns = new AList<>();
+        AList<Double> times = new AList<>();
+        AList<Integer> opCounts = new AList<>();
         /**
          * for MAX_N = 128 runs 8 times - br points:
          * 1 000 / 2 000/ 4 000/ 8 000/ 16 000/ 32 000 /64 000 /128 000
          */
-        for (int n = startingN; n <= MAX_N; n *=  2) {
-            AList timedA = new AList<Integer>();
+        for (int n = startingN; n <= MAX_N; n *= 2) {
+            AList<Integer>timedA = new AList<>();
             Stopwatch sw = new Stopwatch();
 
             int opCount;

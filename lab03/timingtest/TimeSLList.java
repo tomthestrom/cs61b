@@ -1,4 +1,5 @@
 package timingtest;
+
 import edu.princeton.cs.algs4.Stopwatch;
 
 /**
@@ -33,9 +34,9 @@ public class TimeSLList {
 
         int MAX_OP_COUNT = Math.multiplyExact(1, 10000);
 
-        AList Ns = new AList<Integer>();
-        AList times = new AList<Double>();
-        AList opCounts = new AList<Integer>();
+        AList<Integer> Ns = new AList<>();
+        AList<Double> times = new AList<>();
+        AList<Integer> opCounts = new AList<>();
 
         /**
          * for MAX_N = 128 runs 8 times - br points:
@@ -43,8 +44,8 @@ public class TimeSLList {
          * Fills SLList with N items
          * Calls getLast() of the SLList MAX_OP_COUNT times
          */
-        for (int n = startingN; n <= MAX_N; n *=  2) {
-            SLList timedSLL = new SLList<Integer>();
+        for (int n = startingN; n <= MAX_N; n *= 2) {
+            SLList<Integer> timedSLL = new SLList<>();
 
             int opCount;
 
