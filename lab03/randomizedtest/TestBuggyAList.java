@@ -77,31 +77,20 @@ public class TestBuggyAList {
                     int randVal = StdRandom.uniform(0, 100);
                     L.addLast(randVal);
                     BL.addLast(randVal);
-                    System.out.println("L, BL, addLast(" + randVal + ")");
                 }
                 case 1 -> {
                     int sizeL = L.size();
                     int sizeBL = BL.size();
-                    System.out.println("L.size: " + sizeL);
-                    System.out.println("BL.size: " + sizeBL);
-
                     assertEquals(sizeL, sizeBL);
                 }
                 case 2 -> {
                     int lastValL = L.getLast();
                     int lastValBL = BL.getLast();
-
-                    System.out.println("L.getLast() -> " + lastValL);
-                    System.out.println("BL.getLast() -> " + lastValBL);
-
                     assertEquals(lastValL, lastValBL);
                 }
                 case 3 -> {
                     int lastValL = L.removeLast();
                     int lastValBL = BL.removeLast();;
-                    System.out.println("L.removeLast() -> " + lastValL);
-                    System.out.println("BL.removeLast() -> " + lastValBL);
-
                     assertEquals(lastValL, lastValBL);
                 }
                 default -> System.out.println("Operation nr " + operationNumber + " not implemented.");
