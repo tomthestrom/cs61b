@@ -54,7 +54,7 @@ public class LinkedListDeque<T> {
     public void addLast(T item) {
         DequeNode<T> newNode = new DequeNode<>(item, sentinel.prev, sentinel);
 
-        if (size == 0) {
+        if (isEmpty()) {
             sentinel.next = newNode;
             sentinel.prev = newNode;
 
