@@ -170,6 +170,53 @@ public class LinkedListDequeTest {
     }
 
     @Test
+    public void testGetRecursive() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+
+        lld1.addFirst(5);
+        lld1.addFirst(4);
+        lld1.addFirst(3);
+        lld1.addFirst(2);
+        lld1.addFirst(1);
+        lld1.addFirst(0);
+
+        lld1.addLast(6);
+        lld1.addLast(7);
+        lld1.addLast(8);
+
+        int actualIndex0 = lld1.getRecursive(0);
+        int expectedIndex0 = 0;
+
+        int actualIndex1 = lld1.getRecursive(1);
+        int expectedIndex1 = 1;
+
+        int actualIndex2 = lld1.getRecursive(2);
+        int expectedIndex2 = 2;
+
+        int actualIndex3 = lld1.getRecursive(3);
+        int expectedIndex3 = 3;
+
+        int actualIndex4 = lld1.getRecursive(4);
+        int expectedIndex4 = 4;
+
+        int actualIndex6 = lld1.getRecursive(6);
+        int expectedIndex6 = 6;
+
+        int actualIndex8 = lld1.getRecursive(8);
+        int expectedIndex8 = 8;
+
+        assertEquals(expectedIndex0, actualIndex0);
+        assertEquals(expectedIndex1, actualIndex1);
+        assertEquals(expectedIndex2, actualIndex2);
+        assertEquals(expectedIndex3, actualIndex3);
+        //test if getting the middle element works
+        assertEquals(expectedIndex4, actualIndex4);
+        //check if getting elements from the back works
+        assertEquals(expectedIndex6, actualIndex6);
+        assertEquals(expectedIndex8, actualIndex8);
+    }
+
+    @Test
     public void testEquals() {
 
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();

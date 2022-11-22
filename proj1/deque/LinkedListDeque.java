@@ -124,15 +124,54 @@ public class LinkedListDeque<T> {
             throw new IndexOutOfBoundsException();
         }
 
-        boolean iterFromFront = iterFromFront(index, getBreakPointIndex());
+        boolean iterFromFront = shouldSearchFromFront(index, getBreakPointIndex());
 
-        DequeNode<T> nextNode = iterFromFront ? getNodeFromFront(index) : getNodeFromBack(index);
+        DequeNode<T> nextNode = iterFromFront ? getFromFront(index) : getFromBack(index);
 
         return nextNode.item;
     }
 
+    public T getRecursive(int index) {
+        if (index > size - 1) {
+            throw new IndexOutOfBoundsException();
+        }
+        boolean shouldSearchFromFront = shouldSearchFromFront(index, getBreakPointIndex());
 
-    private DequeNode getNodeFromFront(int index) {
+        DequeNode<T> nextNode = shouldSearchFromFront ?
+                getRecFromFront(sentinel.next, index) :
+                getRecFromBack(sentinel.prev, getReverseIndex(index));
+
+        return nextNode.item;
+    }
+
+    /*
+    Helper method for getRecursive
+     */
+    private DequeNode getRecFromFront(DequeNode nextNode, int index) {
+        if (index == 0) {
+            return nextNode;
+        }
+
+        return getRecFromFront(nextNode.next, index - 1);
+    }
+
+    private int getReverseIndex(int index) {
+        return (size - 1) - index;
+    }
+    /*
+    Helper method for getRecursive
+    Expects index provided from behind so the last (9th) element from a 9 item list is at index=0
+     */
+    private DequeNode getRecFromBack(DequeNode nextNode, int reverseIndex) {
+        if (reverseIndex == 0) {
+            return nextNode;
+        }
+
+        return getRecFromBack(nextNode.prev, reverseIndex - 1);
+    }
+
+
+    private DequeNode getFromFront(int index) {
         DequeNode nextNode = sentinel.next;
 
         int i = 0;
@@ -144,7 +183,7 @@ public class LinkedListDeque<T> {
         return nextNode;
     }
 
-    private DequeNode getNodeFromBack(int index) {
+    private DequeNode getFromBack(int index) {
         DequeNode nextNode = sentinel.prev;
 
         int i = size - 1;
@@ -172,7 +211,7 @@ public class LinkedListDeque<T> {
     * True: start from the front
     * False: start from the end
     * */
-    private boolean iterFromFront(int requestedIndex, int brPointIndex) {
+    private boolean shouldSearchFromFront(int requestedIndex, int brPointIndex) {
         return requestedIndex < brPointIndex;
     }
 
