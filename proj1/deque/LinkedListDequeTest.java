@@ -33,8 +33,8 @@ public class LinkedListDequeTest {
         lld1.addLast("back");
         assertEquals(3, lld1.size());
 
-        //System.out.println("Printing out deque: ");
-        //	lld1.printDeque();
+        System.out.println("Printing out deque: ");
+        lld1.printDeque();
     }
 
     @Test

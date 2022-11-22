@@ -265,4 +265,25 @@ public class LinkedListDeque<T> {
 
         return true;
     }
+
+    /**
+     * Prints the items in the deque from first to last, separated by a space.
+     * Once all the items have been printed, prints out a new line.
+     */
+    public void printDeque() {
+        if (size > 0) {
+            DequeNode nextNode = sentinel.next;
+            StringBuilder itemString = new StringBuilder(String.valueOf(nextNode.item));
+            int i = 0;
+            while (i < size - 1) {
+                nextNode = nextNode.next;
+                itemString.append(" ").append(nextNode.item);
+                i += 1;
+            }
+
+            System.out.println(itemString);
+        }
+
+        System.out.println();
+    }
 }
