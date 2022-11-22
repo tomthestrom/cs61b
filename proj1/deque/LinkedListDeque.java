@@ -54,9 +54,9 @@ public class LinkedListDeque<T> {
             newNode.prev = sentinel;
         } else {
             //set the previously last node's next pointer to newNode
-           sentinel.prev.next = newNode;
+            sentinel.prev.next = newNode;
             //set sentinel's prev pointer to the nexNode - new last element
-           sentinel.prev = newNode;
+            sentinel.prev = newNode;
         }
 
         size += 1;
@@ -117,5 +117,22 @@ public class LinkedListDeque<T> {
         size -= 1;
 
         return lastItem;
+    }
+
+    public T get(int index) {
+        if (index > size - 1) {
+            throw new IndexOutOfBoundsException();
+        }
+        int i = 0;
+
+        DequeNode<T> nextNode = sentinel.next;
+
+        while (i < index) {
+            nextNode = nextNode.next;
+            i += 1;
+        }
+
+
+        return nextNode.item;
     }
 }
