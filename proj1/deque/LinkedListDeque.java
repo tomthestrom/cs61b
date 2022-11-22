@@ -1,7 +1,15 @@
 package deque;
 
+/**
+ * Deque implementation based on specs for project1... and some tuning :)
+ * @param <T>
+ */
 public class LinkedListDeque<T> {
 
+    /**
+     * One DequeNode - a unit used by LinkedListDeque :)
+     * @param <T>
+     */
     private static class DequeNode<T> {
         public T item;
         public DequeNode prev;
@@ -119,6 +127,11 @@ public class LinkedListDeque<T> {
         return lastItem;
     }
 
+    /**
+     * Get element by index using iteration (indexing from the front)
+     * @param index
+     * @return
+     */
     public T get(int index) {
         if (index > size - 1) {
             throw new IndexOutOfBoundsException();
@@ -131,6 +144,12 @@ public class LinkedListDeque<T> {
         return nextNode.item;
     }
 
+
+    /**
+     * Get element by index using recursion (indexing from the front)
+     * @param index
+     * @return
+     */
     public T getRecursive(int index) {
         if (index > size - 1) {
             throw new IndexOutOfBoundsException();
@@ -155,6 +174,11 @@ public class LinkedListDeque<T> {
         return getRecFromFront(nextNode.next, index - 1);
     }
 
+    /**
+     * Helper method - reversing the index - useful when looking from the back
+     * @param index
+     * @return
+     */
     private int getReverseIndex(int index) {
         return (size - 1) - index;
     }
@@ -171,6 +195,11 @@ public class LinkedListDeque<T> {
     }
 
 
+    /**
+     * Iterate from the front until index and return DequeNode at said index
+     * @param index
+     * @return
+     */
     private DequeNode getFromFront(int index) {
         DequeNode nextNode = sentinel.next;
 
@@ -183,6 +212,9 @@ public class LinkedListDeque<T> {
         return nextNode;
     }
 
+    /*
+     * Iterate from the back until index and return DequeNode at said index
+    *  */
     private DequeNode getFromBack(int index) {
         DequeNode nextNode = sentinel.prev;
 
