@@ -159,4 +159,27 @@ public class LinkedListDequeTest {
 
         assertEquals(expectedIndex8, actualIndex8);
     }
+
+    @Test
+    public void testEquals() {
+
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+        lld1.addFirst(5);
+        lld1.addFirst(4);
+        lld1.addFirst(3);
+        lld2.addFirst(5);
+        lld2.addFirst(4);
+        lld2.addFirst(3);
+
+        assertTrue(lld1.equals(lld2));
+
+        lld2.addFirst(1);
+
+        assertFalse(lld1.equals(lld2));
+
+        lld1.addFirst(1);
+
+        assertTrue(lld1.equals(lld2));
+    }
 }

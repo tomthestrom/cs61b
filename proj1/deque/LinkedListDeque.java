@@ -135,4 +135,22 @@ public class LinkedListDeque<T> {
 
         return nextNode.item;
     }
+
+    /*
+       Returns whether or not the parameter o is equal to the deque.
+        o is considered equal if it is a deque and if it contains the same contents
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof LinkedListDeque) || size() != ((LinkedListDeque<?>) o).size()) {
+            return false;
+        }
+
+        for (int i = 0; i < size; i += 1) {
+            if (get(i) != ((LinkedListDeque<?>) o).get(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
