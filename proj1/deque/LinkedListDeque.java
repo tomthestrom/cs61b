@@ -123,18 +123,59 @@ public class LinkedListDeque<T> {
         if (index > size - 1) {
             throw new IndexOutOfBoundsException();
         }
+
+        boolean iterFromFront = iterFromFront(index, getBreakPointIndex());
+
+        DequeNode<T> nextNode = iterFromFront ? getNodeFromFront(index) : getNodeFromBack(index);
+
+        return nextNode.item;
+    }
+
+
+    private DequeNode getNodeFromFront(int index) {
+        DequeNode nextNode = sentinel.next;
+
         int i = 0;
-
-        DequeNode<T> nextNode = sentinel.next;
-
         while (i < index) {
             nextNode = nextNode.next;
             i += 1;
         }
 
-
-        return nextNode.item;
+        return nextNode;
     }
+
+    private DequeNode getNodeFromBack(int index) {
+        DequeNode nextNode = sentinel.prev;
+
+        int i = size - 1;
+        while (i > index) {
+            nextNode = nextNode.prev;
+            i -= 1;
+        }
+
+        return nextNode;
+    }
+
+    /*
+    Returns size / 2 if size even
+    (size + 1) / 2 if uneven
+
+    Eg. for size 7 -> getHalfIndex() -> 4
+    */
+    private int getBreakPointIndex() {
+        boolean isSizeEven = size % 2 == 0;
+        return isSizeEven ? size / 2 : (size + 1) / 2;
+    }
+
+    /*
+    * Determines whether we should start looking for an item from the front
+    * True: start from the front
+    * False: start from the end
+    * */
+    private boolean iterFromFront(int requestedIndex, int brPointIndex) {
+        return requestedIndex < brPointIndex;
+    }
+
 
     /*
        Returns whether or not the parameter o is equal to the deque.

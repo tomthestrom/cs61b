@@ -149,6 +149,12 @@ public class LinkedListDequeTest {
         int actualIndex3 = lld1.get(3);
         int expectedIndex3 = 3;
 
+        int actualIndex4 = lld1.get(4);
+        int expectedIndex4 = 4;
+
+        int actualIndex6 = lld1.get(6);
+        int expectedIndex6 = 6;
+
         int actualIndex8 = lld1.get(8);
         int expectedIndex8 = 8;
 
@@ -156,7 +162,10 @@ public class LinkedListDequeTest {
         assertEquals(expectedIndex1, actualIndex1);
         assertEquals(expectedIndex2, actualIndex2);
         assertEquals(expectedIndex3, actualIndex3);
-
+        //test if getting the middle element works
+        assertEquals(expectedIndex4, actualIndex4);
+        //check if getting elements from the back works
+        assertEquals(expectedIndex6, actualIndex6);
         assertEquals(expectedIndex8, actualIndex8);
     }
 
