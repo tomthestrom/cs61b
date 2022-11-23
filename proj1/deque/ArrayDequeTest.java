@@ -120,4 +120,85 @@ public class ArrayDequeTest<T> {
          */
         assertEquals(expected3, actual3);
     }
+
+    @Test
+    public void testSize() {
+        ArrayDeque<Integer> AD = new ArrayDeque();
+
+        int N = 10;
+
+        //conceptual array = [9, 7, 5, 3, 1, 0, 2, 4, 6, 8]
+        for (int i = 0; i < N; i += 1) {
+            if (i % 2 == 0) {
+                AD.addLast(i);
+            } else {
+                AD.addFirst(i);
+            }
+        }
+        int expectedSize = 10;
+        int actualSize = AD.size();
+
+        assertEquals(expectedSize, actualSize);
+    }
+
+    @Test
+    public void testGetAddResize() {
+        ArrayDeque<Integer> AD = new ArrayDeque();
+
+        int N = 10;
+
+        //conceptual array = [9, 7, 5, 3, 1, 0, 2, 4, 6, 8]
+        for (int i = 0; i < N; i += 1) {
+            if (i % 2 == 0) {
+                AD.addLast(i);
+            } else {
+                AD.addFirst(i);
+            }
+        }
+
+        int expectedIndex0 = 9;
+        int actualIndex0 = AD.get(0);
+        int expectedIndex1 = 7;
+        int actualIndex1 = AD.get(1);
+        int expectedIndex4 = 1;
+        int actualIndex4 = AD.get(4);
+        int expectedIndex6 = 2;
+        int actualIndex6 = AD.get(6);
+        int expectedIndex9 = 8;
+        int actualIndex9 = AD.get(9);
+
+        assertEquals(expectedIndex0, actualIndex0);
+        assertEquals(expectedIndex1, actualIndex1);
+        assertEquals(expectedIndex4, actualIndex4);
+        assertEquals(expectedIndex6, actualIndex6);
+        assertEquals(expectedIndex9, actualIndex9);
+    }
+
+    /** Tests insertion of a large number of items.*/
+    @Test
+    public void testMegaAddFirst() {
+        ArrayDeque<Integer> AD = new ArrayDeque();
+        int N = 1000000;
+        for (int i = 0; i < N; i += 1) {
+            AD.addFirst(i);
+        }
+
+        for (int i = 0; i < N; i += 1) {
+            AD.addFirst(AD.get(i));
+        }
+    }
+
+    /** Tests insertion of a large number of items.*/
+    @Test
+    public void testMegaAddLast() {
+        ArrayDeque<Integer> AD = new ArrayDeque();
+        int N = 1000000;
+        for (int i = 0; i < N; i += 1) {
+            AD.addLast(i);
+        }
+
+        for (int i = 0; i < N; i += 1) {
+            AD.addLast(AD.get(i));
+        }
+    }
 }

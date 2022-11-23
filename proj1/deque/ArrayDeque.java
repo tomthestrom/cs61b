@@ -25,6 +25,12 @@ public class ArrayDeque<T> {
      * [null, null, 3, 4]
      */
     public void addFirst(T item) {
+        boolean isFull = sizeFirst == firstItems.length;
+
+        if (isFull) {
+            resize(sizeFirst * 2, firstItems);
+        }
+
         firstItems[firstItems.length - 1 - sizeFirst] = item;
         sizeFirst += 1;
     }
@@ -38,6 +44,12 @@ public class ArrayDeque<T> {
      * [5, 6, null, null]
      */
     public void addLast(T item) {
+        boolean isFull = sizeLast == lastItems.length;
+
+        if (isFull) {
+            resize(sizeLast * 2, lastItems);
+        }
+
         lastItems[sizeLast] = item;
         sizeLast += 1;
     }
@@ -87,9 +99,9 @@ public class ArrayDeque<T> {
         boolean isInFirstItems = index < sizeFirst;
 
         if (isInFirstItems) {
-            return firstItems[getIndexInFirstItems(index)];
+            return firstItems[getIndex(index, isInFirstItems)];
         } else {
-            return lastItems[getIndexInLastItems(index)];
+            return lastItems[getIndex(index, isInFirstItems)];
         }
     }
 
@@ -110,9 +122,59 @@ public class ArrayDeque<T> {
      */
     private int getIndexInLastItems(int requestedIndex) {
         if (sizeFirst > 0) {
-           return requestedIndex - sizeFirst - 1;
+           return requestedIndex - sizeFirst;
         }
 
         return requestedIndex;
+    }
+
+    private int getIndex(int requestedIndex, boolean first) {
+       if (first) {
+           return getIndexInFirstItems(requestedIndex);
+       }
+
+        return getIndexInLastItems(requestedIndex);
+    }
+
+    /**
+     * Resizes the underlying array (passed in as reference to param arrayToResize) (either firstItems or lastItems)
+     */
+    private void resize(int capacity, T[] arrayToResize) {
+        T[] a = (T[]) new Object[capacity];
+
+        boolean resizeFirst = arrayToResize == firstItems;
+
+        if (resizeFirst) {
+            resizeFirst(a);
+        } else {
+            resizeLast(a);
+        }
+    }
+
+    /*
+     *
+     * check addFirst to learn how indexing works
+     * basically we're adding new firsts from right to left
+     * determine the leftmost (starting) index
+     * with last elements it works as in trivial array - adding from left to right
+     * default value 0 works for lastItems
+     *
+     *  */
+    private void resizeFirst(T[] a) {
+        int startIndex =  a.length - sizeFirst;
+        int lenToCopy  = sizeFirst;
+
+        System.arraycopy(firstItems,0, a, startIndex, lenToCopy);
+
+        firstItems = a;
+    }
+
+    private void resizeLast(T[] a) {
+        int startIndex = 0;
+        int lenToCopy = sizeLast;
+
+        System.arraycopy(lastItems,0, a, startIndex, lenToCopy);
+
+        lastItems = a;
     }
 }
