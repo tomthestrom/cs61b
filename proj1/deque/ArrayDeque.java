@@ -17,20 +17,28 @@ public class ArrayDeque<T> {
     }
 
     /**
-     * Added item is always at the end of the array.
-     * @param item
+     * Added item is always at the beginning of the array.
+     * Such as beginning: [null, null, null, null]
+     * addFirst(4)
+     * [null, null, null, 4]
+     * addFirst(3)
+     * [null, null, 3, 4]
      */
     public void addFirst(T item) {
-        firstItems[sizeFirst] = item;
+        firstItems[firstItems.length - 1 - sizeFirst] = item;
         sizeFirst += 1;
     }
 
     /**
-     * Added item is always at the current beginning
-     * @param item
+     * Added item is always at the current end of the array
+     * Such as beginning: [null, null, null, null]
+     * addLast(5)
+     * [5, null, null, null]
+     * addLast(6)
+     * [5, 6, null, null]
      */
     public void addLast(T item) {
-        lastItems[lastItems.length - 1 - sizeLast] = item;
+        lastItems[sizeLast] = item;
         sizeLast += 1;
     }
 
@@ -67,11 +75,9 @@ public class ArrayDeque<T> {
     /**
      * Gets item by index
      * Storing items is implemented as:
-        * firstItems = [ 4 , 3 , 2, 1] - latest first item at the end of the array
-        * lastItems = [8, 7, 6, 5] - latest added last item in the beginning of the array
-        * Conceptual array = [1, 2, 3, 4, 5, 6, 7, 8] - or reversed(firstItems) + reversed(lastItems)
-     * @param index
-     * @return
+        * firstItems = [ 1 , 2 , 3, 4] - latest first item at the beginning of the array
+        * lastItems = [5, 6, 7, 8] - latest added last item at the end of the array
+        * Conceptual array = [1, 2, 3, 4, 5, 6, 7, 8] - or firstItems + lastItems
      */
     public T get(int index) {
         if (index >= size()) {
@@ -81,9 +87,10 @@ public class ArrayDeque<T> {
         boolean isInFirstItems = index < sizeFirst;
 
         if (isInFirstItems) {
-            return firstItems[sizeFirst - 1 - index];
+            //in an array with 3 items of length 4: beginning index:[ 4 - 3] + index
+            return firstItems[(firstItems.length - sizeFirst) + index];
         } else {
-            return lastItems[lastItems.length - 1 - index];
+            return lastItems[index];
         }
     }
 }

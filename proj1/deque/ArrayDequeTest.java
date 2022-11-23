@@ -6,11 +6,19 @@ import static org.junit.Assert.*;
 
 /* Performs ArrayDeque tests. */
 public class ArrayDequeTest<T> {
+
+    /**
+     * After last call to addFirst:
+     * Conceptual array: [5, 4, 2, 1]
+     * In underlying implementation: firstItems = [5, 4, 2, 1]
+     */
     @Test
     public void testAddFirstNoResizing() {
         ArrayDeque<Integer> AD1 = new ArrayDeque<>();
 
+        //1 at index 0
         AD1.addFirst(1);
+        // 2 at index 0, 1 at index 1
         AD1.addFirst(2);
 
         int expected = 1;
@@ -18,6 +26,7 @@ public class ArrayDequeTest<T> {
 
         assertEquals(expected, actual);
 
+        //first at index 0 now
         AD1.addFirst(4);
 
         expected = 4;
@@ -25,8 +34,9 @@ public class ArrayDequeTest<T> {
         assertEquals(expected, actual);
 
         AD1.addFirst(5);
-        expected = 4;
-        actual = AD1.get(3);
+        actual = AD1.get(1);
+
+        //expected hasn't changed, therefore it's value is: 4
         assertEquals(expected, actual);
     }
 
@@ -34,7 +44,7 @@ public class ArrayDequeTest<T> {
     /**
      * After last call to addLast:
      * Conceptual array: [1, 2, 4, 5]
-     * In underlying implementation: [5, 4, 2, 1]
+     * In underlying implementation: lastItems = [1, 2, 4, 5]
      */
     public void testAddLastNoResizing() {
         ArrayDeque<Integer> AD1 = new ArrayDeque<>();
@@ -45,17 +55,20 @@ public class ArrayDequeTest<T> {
         int expected = 2;
         int actual = AD1.get(1);
 
+        //[1, 2, null, null] - value at index 1 = 2
         assertEquals(expected, actual);
 
         AD1.addLast(4);
 
         expected = 1;
         actual = AD1.get(0);
+        //[1, 2, 4, null] - value at index 0 = 1
         assertEquals(expected, actual);
 
         AD1.addLast(5);
         expected = 5;
         actual = AD1.get(3);
+        //[1, 2, 4, 5] - value at index 3 = 1
         assertEquals(expected, actual);
     }
 
