@@ -87,10 +87,32 @@ public class ArrayDeque<T> {
         boolean isInFirstItems = index < sizeFirst;
 
         if (isInFirstItems) {
-            //in an array with 3 items of length 4: beginning index:[ 4 - 3] + index
-            return firstItems[(firstItems.length - sizeFirst) + index];
+            return firstItems[getIndexInFirstItems(index)];
         } else {
-            return lastItems[index];
+            return lastItems[getIndexInLastItems(index)];
         }
+    }
+
+    /*
+    * Determines the starting index in the underlying implementation
+    * in an array with 3 items of length 4: beginning index:
+    * First element can be found at:
+    * [length: 4 - sizeFirst: 3]
+    * + index provided by the user to get the intended value
+    *  */
+    private int getIndexInFirstItems(int requestedIndex) {
+        return (firstItems.length - sizeFirst) + requestedIndex;
+    }
+
+    /**
+     * Calculates the index in the lastItems array
+     * In case there are items in firstItems we need to adjust the requestedIndex to account for indexes in firstItems
+     */
+    private int getIndexInLastItems(int requestedIndex) {
+        if (sizeFirst > 0) {
+           return requestedIndex - sizeFirst - 1;
+        }
+
+        return requestedIndex;
     }
 }

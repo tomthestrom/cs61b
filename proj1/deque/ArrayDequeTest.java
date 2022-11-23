@@ -77,8 +77,8 @@ public class ArrayDequeTest<T> {
      * After last add operation:
      * Conceptual array: [0, 1, 2, 3]
      * In underlying implementation:
-     * firstItems: [1, 0, null, null]
-     * lastItems: [null, null, 2, 3]
+     * firstItems: [null, null, 0, 1]
+     * lastItems: [2, 3, null, null]
      */
     public void testGetNoResize() {
         ArrayDeque<Integer> AD1 = new ArrayDeque<>();
@@ -90,6 +90,11 @@ public class ArrayDequeTest<T> {
         int expected1 = 1;
         int actual1 = AD1.get(0);
 
+        /**
+         * firstItems: [null, null, null, 1]
+         * lastItems: [2, 3, null, null]
+         * Expected 1 - index 0 at firstItems index 4 in the underlying implementation
+         */
         assertEquals(expected1, actual1);
 
         AD1.addFirst(0);
@@ -97,12 +102,22 @@ public class ArrayDequeTest<T> {
         int expected0 = 0;
         int actual0 = AD1.get(0);
 
+        /**
+         * firstItems: [null, null, 0, 1]
+         * lastItems: [2, 3, null, null]
+         * Expected 0 - index 0 at firstItems index 3 in the underlying implementation
+         */
         assertEquals(expected0, actual0);
 
 
         int expected3 = 3;
         int actual3 = AD1.get(3);
 
+        /**
+         * firstItems: [null, null, 0, 1]
+         * lastItems: [2, 3, null, null]
+         * Expected 3 - index 3 at lastItems index 1 in the underlying implementation
+         */
         assertEquals(expected3, actual3);
     }
 }
