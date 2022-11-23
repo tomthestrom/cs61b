@@ -62,8 +62,20 @@ public class ArrayDeque<T> {
         return size() == 0;
     }
 
+    /**
+     * Prints the items in the deque from first to last, separated by a space.
+     * Once all the items have been printed, prints out a new line.
+     */
     public void printDeque() {
-        //TODO: Implement
+        if (size() > 0) {
+            StringBuilder itemString = new StringBuilder(String.valueOf(get(0)));
+            for (int i = 1; i < size(); i += 1) {
+                itemString.append(" ").append(get(i));
+            }
+            System.out.println(itemString);
+        }
+
+        System.out.println();
     }
 
     public T removeFirst() {
