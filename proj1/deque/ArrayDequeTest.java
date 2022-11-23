@@ -201,4 +201,25 @@ public class ArrayDequeTest<T> {
             AD.addLast(AD.get(i));
         }
     }
+    @Test
+    public void testRemoveLast() {
+        ArrayDeque<Integer> AD = new ArrayDeque<>();
+        AD.addLast(99);
+        int expected99 = 99;
+        int actual99 = AD.get(0);
+        assertEquals(expected99, actual99);
+
+        AD.addLast(36);
+        AD.removeLast();
+
+        actual99 = AD.removeLast();
+
+        assertEquals(expected99, actual99);
+
+        AD.addLast(100);
+
+        int expected100 = 100;
+        int actual100 = AD.removeLast();
+        assertEquals(expected100, actual100);
+    }
 }
