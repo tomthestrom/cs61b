@@ -79,6 +79,10 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
+        if ((sizeFirst < firstItems.length / 2) && (sizeFirst > 8)) {
+            resize(firstItems.length / 2, firstItems);
+        }
+
         int firstItemIndex = getIndexInFirstItems(0);
 
         T firstItem = firstItems[firstItemIndex];
@@ -90,6 +94,10 @@ public class ArrayDeque<T> {
     }
 
     public T removeLast() {
+        if ((sizeLast < lastItems.length / 2) && (sizeLast > 8)) {
+            resize(lastItems.length / 2, lastItems);
+        }
+
         int lastItemIndex = getIndexInLastItems(size() - 1);
         T lastItem = lastItems[lastItemIndex];
         lastItems[lastItemIndex] = null;

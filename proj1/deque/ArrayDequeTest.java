@@ -1,5 +1,6 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -221,5 +222,60 @@ public class ArrayDequeTest<T> {
         int expected100 = 100;
         int actual100 = AD.removeLast();
         assertEquals(expected100, actual100);
+    }
+
+    @Test
+    /*
+     * Randomly add, remove and compare values of LinkedListDeque and ArrayDeque for N nr. of operations
+     */
+    public void randomizedTest() {
+        LinkedListDeque<Integer> L = new LinkedListDeque<>();
+        ArrayDeque<Integer> AD = new ArrayDeque<>();
+
+
+        int N = 50000;
+        for (int i = 0; i < N; i += 1) {
+            //operation nrs generated in provided range:
+            int operationNumber = StdRandom.uniform(0, 6);
+
+            // if operation can't be executed proceed to the next iteration
+            if (L.size() == 0) {
+                continue;
+            }
+
+            switch (operationNumber) {
+                case 0 -> {
+                    int randVal = StdRandom.uniform(0, 100);
+                    L.addLast(randVal);
+                    AD.addLast(randVal);
+                }
+                case 1 -> {
+                    int sizeL = L.size();
+                    int sizeAD = AD.size();
+                    assertEquals(sizeL, sizeAD);
+                }
+                case 2 -> {
+                    int lastValL = L.get(L.size() - 1);
+                    int lastValAD = AD.get(L.size() - 1);
+                    assertEquals(lastValL, lastValAD);
+                }
+                case 3 -> {
+                    int lastValL = L.removeLast();
+                    int lastValAD = AD.removeLast();
+                    assertEquals(lastValL, lastValAD);
+                }
+                case 4 -> {
+                    int firstValL = L.removeFirst();
+                    int firstValAD = AD.removeFirst();
+                    assertEquals(firstValL, firstValAD);
+                }
+                case 5 -> {
+                    int middleValL = L.get(L.size() / 2);
+                    int middleValAD = AD.get(AD.size() / 2);
+                    assertEquals(middleValL, middleValAD);
+                }
+                default -> System.out.println("Operation nr " + operationNumber + " not implemented.");
+            }
+        }
     }
 }
