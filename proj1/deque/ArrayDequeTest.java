@@ -41,23 +41,29 @@ public class ArrayDequeTest<T> {
         // 2 at index 0, 1 at index 1
         AD1.addFirst(2);
 
-        int expected = 1;
-        int actual = AD1.get(1);
-
-        assertEquals(expected, actual);
-
-        //first at index 0 now
+        AD1.addFirst(3);
         AD1.addFirst(4);
-
-        expected = 4;
-        actual = AD1.get(0);
-        assertEquals(expected, actual);
-
         AD1.addFirst(5);
-        actual = AD1.get(1);
-
-        //expected hasn't changed, therefore it's value is: 4
-        assertEquals(expected, actual);
+        AD1.addFirst(6);
+        AD1.addFirst(7);
+        AD1.addFirst(8);
+//        int expected = 1;
+//        int actual = AD1.get(1);
+//
+//        assertEquals(expected, actual);
+//
+//        //first at index 0 now
+//        AD1.addFirst(4);
+//
+//        expected = 4;
+//        actual = AD1.get(0);
+//        assertEquals(expected, actual);
+//
+//        AD1.addFirst(5);
+//        actual = AD1.get(1);
+//
+//        //expected hasn't changed, therefore it's value is: 4
+//        assertEquals(expected, actual);
     }
 
     @Test

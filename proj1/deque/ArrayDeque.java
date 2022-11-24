@@ -28,8 +28,19 @@ public class ArrayDeque<T> {
     }
 
     /**
+     * Inserts items starting from the middle of the array to the left
+     * In case the left size is filled till index 0 - inserting from the end
+     * [null, null, null, 1, null, null, null, null]
+     *          insert direction:
+     * [<----------- start\ /end<------------------]
      */
     public void addFirst(T item) {
+        int insertIndex = getCircularArrayStart() - 1 - sizeFirst;
+
+        // we are subtracting from circularArray.length if all items to the left are filled
+        insertIndex = insertIndex >= 0 ? insertIndex : circularArray.length + insertIndex;
+
+        circularArray[insertIndex] = item;
         sizeFirst += 1;
     }
 
@@ -71,7 +82,7 @@ public class ArrayDeque<T> {
 
     public T removeFirst() {
         int firstItemIndex;
-        T firstItem;
+        T firstItem = null;
 
 
         return firstItem;
@@ -79,7 +90,7 @@ public class ArrayDeque<T> {
 
     public T removeLast() {
         int lastItemIndex;
-        T lastItem;
+        T lastItem = null;
 
         sizeLast -= 1;
 
@@ -99,59 +110,58 @@ public class ArrayDeque<T> {
         }
 
         boolean isInFirstItems = index < sizeFirst;
-
-        if (isInFirstItems) {
-            return firstItems[getIndex(index, isInFirstItems)];
-        } else {
-            return lastItems[getIndex(index, isInFirstItems)];
-        }
+        return null;
     }
 
-    /*
-    * Determines the starting index in the underlying implementation
-    * in an array with 3 items of length 4: beginning index:
-    * First element can be found at:
-    * [length: 4 - sizeFirst: 3]
-    * + index provided by the user to get the intended value
-    *  */
-    private int getIndexInFirstItems(int requestedIndex) {
-        return (firstItems.length - sizeFirst) + requestedIndex;
+    private int getCircularArrayStart() {
+        return circularArray.length / 2;
     }
-
-    /**
-     * Calculates the index in the lastItems array
-     * In case there are items in firstItems we need to adjust the requestedIndex to account for indexes in firstItems
-     */
-    private int getIndexInLastItems(int requestedIndex) {
-        if (sizeFirst > 0) {
-           return requestedIndex - sizeFirst;
-        }
-
-        return requestedIndex;
-    }
-
-    private int getIndex(int requestedIndex, boolean first) {
-       if (first) {
-           return getIndexInFirstItems(requestedIndex);
-       }
-
-        return getIndexInLastItems(requestedIndex);
-    }
+//
+//    /*
+//    * Determines the starting index in the underlying implementation
+//    * in an array with 3 items of length 4: beginning index:
+//    * First element can be found at:
+//    * [length: 4 - sizeFirst: 3]
+//    * + index provided by the user to get the intended value
+//    *  */
+//    private int getIndexInFirstItems(int requestedIndex) {
+//        return (firstItems.length - sizeFirst) + requestedIndex;
+//    }
+//
+//    /**
+//     * Calculates the index in the lastItems array
+//     * In case there are items in firstItems we need to adjust the requestedIndex to account for indexes in firstItems
+//     */
+//    private int getIndexInLastItems(int requestedIndex) {
+//        if (sizeFirst > 0) {
+//           return requestedIndex - sizeFirst;
+//        }
+//
+//        return requestedIndex;
+//    }
+//
+//    private int getIndex(int requestedIndex, boolean first) {
+//       if (first) {
+//           return getIndexInFirstItems(requestedIndex);
+//       }
+//
+//        return getIndexInLastItems(requestedIndex);
+//    }
 
     /**
      * Resizes the underlying array (passed in as reference to param arrayToResize) (either firstItems or lastItems)
      */
-    private void resize(int capacity, T[] arrayToResize) {
-        T[] a = (T[]) new Object[capacity];
-
-        boolean resizeFirst = arrayToResize == firstItems;
-
-        if (resizeFirst) {
-            resizeFirst(a);
-        } else {
-            resizeLast(a);
-        }
-    }
+//    private void resize(int capacity, T[] arrayToResize) {
+//        T[] a = (T[]) new Object[capacity];
+//
+//        boolean resizeFirst = arrayToResize == firstItems;
+//
+//        if (resizeFirst) {
+//            resizeFirst(a);
+//        } else {
+//            resizeLast(a);
+//        }
+//    }
 
     /*
      *
@@ -162,22 +172,22 @@ public class ArrayDeque<T> {
      * default value 0 works for lastItems
      *
      *  */
-    private void resizeFirst(T[] a) {
-        int startSrcIndex = firstItems.length - sizeFirst;
-        int startDestIndex =  a.length - sizeFirst;
-        int lenToCopy  = sizeFirst;
-
-        System.arraycopy(firstItems,startSrcIndex, a, startDestIndex, lenToCopy);
-
-        firstItems = a;
-    }
-
-    private void resizeLast(T[] a) {
-        int startIndex = 0;
-        int lenToCopy = sizeLast;
-
-        System.arraycopy(lastItems,0, a, startIndex, lenToCopy);
-
-        lastItems = a;
-    }
+//    private void resizeFirst(T[] a) {
+//        int startSrcIndex = firstItems.length - sizeFirst;
+//        int startDestIndex =  a.length - sizeFirst;
+//        int lenToCopy  = sizeFirst;
+//
+//        System.arraycopy(firstItems,startSrcIndex, a, startDestIndex, lenToCopy);
+//
+//        firstItems = a;
+//    }
+//
+//    private void resizeLast(T[] a) {
+//        int startIndex = 0;
+//        int lenToCopy = sizeLast;
+//
+//        System.arraycopy(lastItems,0, a, startIndex, lenToCopy);
+//
+//        lastItems = a;
+//    }
 }
