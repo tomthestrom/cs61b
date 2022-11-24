@@ -2,62 +2,53 @@ package deque;
 
 public class ArrayDeque<T> {
 
-    private T[] firstItems;
-    private T[] lastItems;
+    /**
+     * Stores items added to the front and to the end
+     */
+    private T[] circularArray;
+
+    /**
+     * Number of items added to the front
+     */
     private int sizeFirst;
+    /**
+     * Number of items added to the end
+     */
     private int sizeLast;
 
+    /**
+     * minimum size of underlying array as in specification
+     */
     private int ITEMS_MIN_SIZE = 8;
 
     public ArrayDeque() {
-        firstItems = (T[]) new Object[ITEMS_MIN_SIZE / 2];
-        lastItems = (T[]) new Object[ITEMS_MIN_SIZE / 2];
+        circularArray = (T[]) new Object[ITEMS_MIN_SIZE];
         sizeFirst = 0;
         sizeLast = 0;
     }
 
     /**
-     * Added item is always at the beginning of the array.
-     * Such as beginning: [null, null, null, null]
-     * addFirst(4)
-     * [null, null, null, 4]
-     * addFirst(3)
-     * [null, null, 3, 4]
      */
     public void addFirst(T item) {
-        boolean isFull = sizeFirst == firstItems.length;
-
-        if (isFull) {
-            resize(sizeFirst * 2, firstItems);
-        }
-
-        firstItems[firstItems.length - 1 - sizeFirst] = item;
         sizeFirst += 1;
     }
 
     /**
-     * Added item is always at the current end of the array
-     * Such as beginning: [null, null, null, null]
-     * addLast(5)
-     * [5, null, null, null]
-     * addLast(6)
-     * [5, 6, null, null]
      */
     public void addLast(T item) {
-        boolean isFull = sizeLast == lastItems.length;
-
-        if (isFull) {
-            resize(sizeLast * 2, lastItems);
-        }
-
-        lastItems[sizeLast] = item;
         sizeLast += 1;
     }
 
+    /**
+     * Size provided to the user of ArrayDeque #Plateau's cave
+     */
     public int size() {
         return sizeFirst + sizeLast;
     }
 
+    /**
+     * True if no items stored
+     */
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -79,28 +70,16 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
-        if ((sizeFirst < firstItems.length / 2) && (sizeFirst > 8)) {
-            resize(firstItems.length / 2, firstItems);
-        }
+        int firstItemIndex;
+        T firstItem;
 
-        int firstItemIndex = getIndexInFirstItems(0);
-
-        T firstItem = firstItems[firstItemIndex];
-        firstItems[firstItemIndex] = null;
-
-        sizeFirst -= 1;
 
         return firstItem;
     }
 
     public T removeLast() {
-        if ((sizeLast < lastItems.length / 2) && (sizeLast > 8)) {
-            resize(lastItems.length / 2, lastItems);
-        }
-
-        int lastItemIndex = getIndexInLastItems(size() - 1);
-        T lastItem = lastItems[lastItemIndex];
-        lastItems[lastItemIndex] = null;
+        int lastItemIndex;
+        T lastItem;
 
         sizeLast -= 1;
 
@@ -184,10 +163,11 @@ public class ArrayDeque<T> {
      *
      *  */
     private void resizeFirst(T[] a) {
-        int startIndex =  a.length - sizeFirst;
+        int startSrcIndex = firstItems.length - sizeFirst;
+        int startDestIndex =  a.length - sizeFirst;
         int lenToCopy  = sizeFirst;
 
-        System.arraycopy(firstItems,0, a, startIndex, lenToCopy);
+        System.arraycopy(firstItems,startSrcIndex, a, startDestIndex, lenToCopy);
 
         firstItems = a;
     }

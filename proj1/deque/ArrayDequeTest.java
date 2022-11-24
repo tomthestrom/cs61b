@@ -3,11 +3,30 @@ package deque;
 import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
+import java.util.HashMap;
 import static org.junit.Assert.*;
 
 /* Performs ArrayDeque tests. */
 public class ArrayDequeTest<T> {
 
+    private HashMap<Integer, Boolean> SizeNonZeroOperation;
+    public ArrayDequeTest() {
+        //some operations can't be executed if AList.size() == 0
+        SizeNonZeroOperation = new HashMap<>();
+
+        // addLast
+        SizeNonZeroOperation.put(0, false);
+        // size
+        SizeNonZeroOperation.put(1, false);
+        // getLast
+        SizeNonZeroOperation.put(2, true);
+        // removeLast
+        SizeNonZeroOperation.put(3, true);
+        //get item in the middle
+        SizeNonZeroOperation.put(4, true);
+        //removeFirst
+        SizeNonZeroOperation.put(5, true);
+    }
     /**
      * After last call to addFirst:
      * Conceptual array: [5, 4, 2, 1]
@@ -111,7 +130,7 @@ public class ArrayDequeTest<T> {
         assertEquals(expected0, actual0);
 
 
-        int expected3 = 3;
+        int expected3 = 2;
         int actual3 = AD1.get(3);
 
         /**
@@ -225,6 +244,25 @@ public class ArrayDequeTest<T> {
     }
 
     @Test
+    public void testRemoveFirstResize() {
+        int addAmount = 10;
+        ArrayDeque<Integer> AD = new ArrayDeque<>();
+
+        for (int i = 0; i < addAmount; i += 1) {
+            AD.addFirst(i);
+        }
+        AD.printDeque();
+        AD.removeFirst();
+        AD.removeFirst();
+        AD.removeFirst();
+        int expected6 = 6;
+        int actual6 = AD.removeFirst();
+
+        AD.printDeque();
+        assertEquals(expected6, actual6);
+    }
+
+    @Test
     /*
      * Randomly add, remove and compare values of LinkedListDeque and ArrayDeque for N nr. of operations
      */
@@ -236,10 +274,10 @@ public class ArrayDequeTest<T> {
         int N = 50000;
         for (int i = 0; i < N; i += 1) {
             //operation nrs generated in provided range:
-            int operationNumber = StdRandom.uniform(0, 6);
+            int operationNumber = StdRandom.uniform(0, 5);
 
             // if operation can't be executed proceed to the next iteration
-            if (L.size() == 0) {
+            if (L.size() == 0 && SizeNonZeroOperation.get(operationNumber)) {
                 continue;
             }
 
@@ -256,7 +294,7 @@ public class ArrayDequeTest<T> {
                 }
                 case 2 -> {
                     int lastValL = L.get(L.size() - 1);
-                    int lastValAD = AD.get(L.size() - 1);
+                    int lastValAD = AD.get(AD.size() - 1);
                     assertEquals(lastValL, lastValAD);
                 }
                 case 3 -> {
