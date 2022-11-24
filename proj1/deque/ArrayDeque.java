@@ -35,10 +35,7 @@ public class ArrayDeque<T> {
      * [<----------- start\ /end<------------------]
      */
     public void addFirst(T item) {
-        int insertIndex = getCircularArrayStart() - 1 - sizeFirst;
-
-        // we are subtracting from circularArray.length if all items to the left are filled
-        insertIndex = insertIndex >= 0 ? insertIndex : circularArray.length + insertIndex;
+        int insertIndex = getNextFirstIndex();
 
         circularArray[insertIndex] = item;
         sizeFirst += 1;
@@ -52,12 +49,7 @@ public class ArrayDeque<T> {
      * [-----------> end\ /start------------------>]
      */
     public void addLast(T item) {
-
-        int insertIndex = getCircularArrayStart() + sizeLast;
-
-        // we are subtracting from circularArray.length if all items to the left are filled
-        insertIndex = insertIndex < circularArray.length ? insertIndex : insertIndex - circularArray.length;
-
+        int insertIndex = getNextLastIndex();
         circularArray[insertIndex] = item;
         sizeLast += 1;
     }
@@ -127,6 +119,29 @@ public class ArrayDeque<T> {
 
     private int getCircularArrayStart() {
         return circularArray.length / 2;
+    }
+
+    /**
+     * Returns the next index to insert the first element at within circularArray
+     */
+    private int getNextFirstIndex() {
+        int insertIndex = getCircularArrayStart() - 1 - sizeFirst;
+        // we are subtracting from circularArray.length if all items to the left are filled
+        insertIndex = insertIndex >= 0 ? insertIndex : circularArray.length + insertIndex;
+        return insertIndex;
+    }
+
+    /**
+     * Returns the next index to insert the last element at within circularArray
+     */
+    private int getNextLastIndex() {
+        int insertIndex = getCircularArrayStart() + sizeLast;
+
+        // we are subtracting from insertIndex if all items to the right are already filled
+        // start filling from left to right (from index 0 ->)
+        insertIndex = insertIndex < circularArray.length ? insertIndex : insertIndex - circularArray.length;
+
+        return insertIndex;
     }
 //
 //    /*
