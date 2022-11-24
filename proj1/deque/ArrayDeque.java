@@ -45,8 +45,20 @@ public class ArrayDeque<T> {
     }
 
     /**
+     * Inserts items starting from the middle of the array to the right
+     * In case the right size is filled till the last index, start inserting from index 0
+     * [null, null, null, 1, null, null, null, null]
+     *          insert direction:
+     * [-----------> end\ /start------------------>]
      */
     public void addLast(T item) {
+
+        int insertIndex = getCircularArrayStart() + sizeLast;
+
+        // we are subtracting from circularArray.length if all items to the left are filled
+        insertIndex = insertIndex < circularArray.length ? insertIndex : insertIndex - circularArray.length;
+
+        circularArray[insertIndex] = item;
         sizeLast += 1;
     }
 
