@@ -8,13 +8,18 @@ public class ArrayDeque<T> {
     private T[] circularArray;
 
     /**
-     * Number of items added to the front
+     * index of the first item
      */
-    private int sizeFirst;
+    private int firstIndex;
     /**
-     * Number of items added to the end
+     * index of the last item
      */
-    private int sizeLast;
+    private int lastIndex;
+
+    /**
+     * Number of elements that circularArray holds
+     */
+    private int size;
 
     /**
      * minimum size of underlying array as in specification
@@ -23,42 +28,41 @@ public class ArrayDeque<T> {
 
     public ArrayDeque() {
         circularArray = (T[]) new Object[ITEMS_MIN_SIZE];
-        sizeFirst = 0;
-        sizeLast = 0;
+        size = 0;
     }
 
     /**
      * Inserts items starting from the middle of the array to the left
      * In case the left size is filled till index 0 - inserting from the end
      * [null, null, null, 1, null, null, null, null]
-     *          insert direction:
+     * insert direction:
      * [<----------- start\ /end<------------------]
      */
     public void addFirst(T item) {
         int insertIndex = getNextFirstIndex();
 
         circularArray[insertIndex] = item;
-        sizeFirst += 1;
+        size += 1;
     }
 
     /**
      * Inserts items starting from the middle of the array to the right
      * In case the right size is filled till the last index, start inserting from index 0
      * [null, null, null, 1, null, null, null, null]
-     *          insert direction:
+     * insert direction:
      * [-----------> end\ /start------------------>]
      */
     public void addLast(T item) {
         int insertIndex = getNextLastIndex();
         circularArray[insertIndex] = item;
-        sizeLast += 1;
+        size += 1;
     }
 
     /**
      * Size provided to the user of ArrayDeque #Plateau's cave
      */
     public int size() {
-        return sizeFirst + sizeLast;
+        return size;
     }
 
     /**
@@ -85,39 +89,48 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
-        int firstItemIndex;
-        T firstItem = null;
+        if (isEmpty()) {
+            return null;
+        }
+        T firstItem = circularArray[firstIndex];
 
+        circularArray[firstIndex] = null;
+        size -= 1;
+        //move firstIndex from right to left
+        firstIndex = firstIndex + 1 < circularArray.length ? firstIndex + 1  : 0;
 
         return firstItem;
     }
 
     public T removeLast() {
-        int lastItemIndex;
-        T lastItem = null;
+        if (isEmpty()) {
+            return null;
+        }
+        T lastItem = circularArray[lastIndex];
 
-        sizeLast -= 1;
+        circularArray[lastIndex] = null;
+        size -= 1;
+
+        //move last index from left to right
+        lastIndex = lastIndex - 1 >= 0 ? lastIndex - 1 : circularArray.length - 1;
 
         return lastItem;
     }
 
     /**
      * Gets item by index
-     * Storing items is implemented as:
-        * firstItems = [ 1 , 2 , 3, 4] - latest first item at the beginning of the array
-        * lastItems = [5, 6, 7, 8] - latest added last item at the end of the array
-        * Conceptual array = [1, 2, 3, 4, 5, 6, 7, 8] - or firstItems + lastItems
+     * Cycling from right to left
      */
     public T get(int index) {
         if (index >= size()) {
             throw new IndexOutOfBoundsException();
         }
 
-        boolean isInFirstItems = index < sizeFirst;
+        boolean isInFirstItems = index < size;
         return null;
     }
 
-    private int getCircularArrayStart() {
+    private int getCircularArrayMiddle() {
         return circularArray.length / 2;
     }
 
@@ -125,9 +138,19 @@ public class ArrayDeque<T> {
      * Returns the next index to insert the first element at within circularArray
      */
     private int getNextFirstIndex() {
-        int insertIndex = getCircularArrayStart() - 1 - sizeFirst;
-        // we are subtracting from circularArray.length if all items to the left are filled
-        insertIndex = insertIndex >= 0 ? insertIndex : circularArray.length + insertIndex;
+        int insertIndex;
+
+        //if size 0, insert into the middle
+        if (size() == 0) {
+            insertIndex = getCircularArrayMiddle() - 1;
+            //if size 0, set the lastIndex
+            lastIndex = insertIndex;
+        } else { //insertion from right to left
+            insertIndex = firstIndex - 1 >= 0 ? firstIndex - 1 : circularArray.length - 1;
+        }
+
+        firstIndex = insertIndex;
+
         return insertIndex;
     }
 
@@ -135,14 +158,30 @@ public class ArrayDeque<T> {
      * Returns the next index to insert the last element at within circularArray
      */
     private int getNextLastIndex() {
-        int insertIndex = getCircularArrayStart() + sizeLast;
+        int insertIndex;
 
-        // we are subtracting from insertIndex if all items to the right are already filled
-        // start filling from left to right (from index 0 ->)
-        insertIndex = insertIndex < circularArray.length ? insertIndex : insertIndex - circularArray.length;
+        //if size 0, insert into the middle
+        if (size() == 0) {
+            insertIndex = getCircularArrayMiddle();
+            //if size 0, set the lastIndex
+            firstIndex = insertIndex;
+        } else { //insertion from left to right
+            insertIndex = lastIndex + 1 < circularArray.length ? lastIndex + 1 : 0;
+        }
+
+        lastIndex = insertIndex;
 
         return insertIndex;
     }
+
+    /**
+     * Returns the index of the currently considered first element from circularArray
+     */
+    private int getFirstIndex() {
+        return 0;
+    }
+
+
 //
 //    /*
 //    * Determines the starting index in the underlying implementation

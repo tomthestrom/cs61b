@@ -43,10 +43,12 @@ public class ArrayDequeTest<T> {
 
         AD1.addFirst(3);
         AD1.addFirst(4);
+        AD1.removeFirst();
         AD1.addFirst(5);
         AD1.addFirst(6);
         AD1.addFirst(7);
         AD1.addFirst(8);
+        AD1.removeFirst();
 //        int expected = 1;
 //        int actual = AD1.get(1);
 //
@@ -85,6 +87,7 @@ public class ArrayDequeTest<T> {
 //        assertEquals(expected, actual);
 
         AD1.addLast(3);
+        AD1.removeLast();
         AD1.addLast(4);
 
 //        expected = 1;
@@ -96,6 +99,7 @@ public class ArrayDequeTest<T> {
         AD1.addLast(6);
         AD1.addLast(7);
         AD1.addLast(8);
+        AD1.removeLast();
 //        expected = 5;
 //        actual = AD1.get(3);
         //[1, 2, 4, 5] - value at index 3 = 1
