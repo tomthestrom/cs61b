@@ -145,6 +145,25 @@ public class ArrayDeque<T> {
         return circularArray[requestedIndex];
     }
 
+    /*
+       Returns whether or not the parameter o is equal to the deque.
+        o is considered equal if it is a deque and if it contains the same contents
+        //compares to ArrayDeques for now
+     */
+    public boolean equals(Object o) {
+        if (!(o instanceof ArrayDeque<?>) || size() != ((ArrayDeque<?>) o).size()) {
+            return false;
+        }
+
+        for (int i = 0; i < size; i += 1) {
+            if (get(i) != ((ArrayDeque<?>) o).get(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private int getCircularArrayMiddle() {
         return circularArray.length / 2;
     }

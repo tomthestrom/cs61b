@@ -270,4 +270,26 @@ public class ArrayDequeTest<T> {
             }
         }
     }
+
+    @Test
+    public void testEquals() {
+        ArrayDeque<Integer> AD1 = new ArrayDeque<>();
+        ArrayDeque<Integer> AD2 = new ArrayDeque<>();
+
+        for (int i = 0; i < 100; i += 1) {
+            if (i % 2 == 0) {
+                AD1.addLast(i);
+                AD2.addLast(i);
+            } else {
+                AD1.addFirst(i);
+                AD2.addFirst(i);
+            }
+        }
+
+        assertTrue(AD1.equals(AD2));
+
+        AD1.removeFirst();
+
+        assertFalse(AD1.equals(AD2));
+    }
 }
