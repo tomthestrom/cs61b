@@ -9,6 +9,9 @@ import static org.junit.Assert.*;
 /* Performs ArrayDeque tests. */
 public class ArrayDequeTest<T> {
 
+    /**
+     * Helper HashMap for the randomized test
+     */
     private HashMap<Integer, Boolean> SizeNonZeroOperation;
     public ArrayDequeTest() {
         //some operations can't be executed if AList.size() == 0
@@ -27,93 +30,36 @@ public class ArrayDequeTest<T> {
         //removeFirst
         SizeNonZeroOperation.put(5, true);
     }
-    /**
-     * After last call to addFirst:
-     * Conceptual array: [5, 4, 2, 1]
-     * In underlying implementation: firstItems = [5, 4, 2, 1]
-     */
     @Test
     public void testAddFirstNoResizing() {
         ArrayDeque<Integer> AD1 = new ArrayDeque<>();
 
-        //1 at index 0
         AD1.addFirst(1);
-        // 2 at index 0, 1 at index 1
         AD1.addFirst(2);
-
         AD1.addFirst(3);
         AD1.addFirst(4);
-        AD1.removeFirst();
         AD1.addFirst(5);
-        AD1.addFirst(6);
-        AD1.addFirst(7);
-        AD1.addFirst(8);
-        AD1.removeFirst();
-//        int expected = 1;
-//        int actual = AD1.get(1);
-//
-//        assertEquals(expected, actual);
-//
-//        //first at index 0 now
-//        AD1.addFirst(4);
-//
-//        expected = 4;
-//        actual = AD1.get(0);
-//        assertEquals(expected, actual);
-//
-//        AD1.addFirst(5);
-//        actual = AD1.get(1);
-//
-//        //expected hasn't changed, therefore it's value is: 4
-//        assertEquals(expected, actual);
+
+        int expected = 5;
+        int actual = AD1.get(0);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    /**
-     * After last call to addLast:
-     * Conceptual array: [1, 2, 4, 5]
-     * In underlying implementation: lastItems = [1, 2, 4, 5]
-     */
     public void testAddLastNoResizing() {
         ArrayDeque<Integer> AD1 = new ArrayDeque<>();
 
         AD1.addLast(1);
         AD1.addLast(2);
 
-//        int expected = 2;
-//        int actual = AD1.get(1);
+        int expected = 2;
+        int actual = AD1.get(1);
 
-        //[1, 2, null, null] - value at index 1 = 2
-//        assertEquals(expected, actual);
-
-        AD1.addLast(3);
-        AD1.removeLast();
-        AD1.addLast(4);
-
-//        expected = 1;
-//        actual = AD1.get(0);
-//        [1, 2, 4, null] - value at index 0 = 1
-//        assertEquals(expected, actual);
-
-        AD1.addLast(5);
-        AD1.addLast(6);
-        AD1.addLast(7);
-        AD1.addLast(8);
-        AD1.removeLast();
-//        expected = 5;
-//        actual = AD1.get(3);
-        //[1, 2, 4, 5] - value at index 3 = 1
-//        assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    /**
-     * After last add operation:
-     * Conceptual array: [0, 1, 2, 3]
-     * In underlying implementation:
-     * firstItems: [null, null, 0, 1]
-     * lastItems: [2, 3, null, null]
-     */
     public void testGetNoResize() {
         ArrayDeque<Integer> AD1 = new ArrayDeque<>();
 
@@ -124,11 +70,6 @@ public class ArrayDequeTest<T> {
         int expected1 = 1;
         int actual1 = AD1.get(0);
 
-        /**
-         * firstItems: [null, null, null, 1]
-         * lastItems: [2, 3, null, null]
-         * Expected 1 - index 0 at firstItems index 4 in the underlying implementation
-         */
         assertEquals(expected1, actual1);
 
         AD1.addFirst(0);
@@ -136,22 +77,12 @@ public class ArrayDequeTest<T> {
         int expected0 = 0;
         int actual0 = AD1.get(0);
 
-        /**
-         * firstItems: [null, null, 0, 1]
-         * lastItems: [2, 3, null, null]
-         * Expected 0 - index 0 at firstItems index 3 in the underlying implementation
-         */
         assertEquals(expected0, actual0);
 
 
         int expected3 = 2;
         int actual3 = AD1.get(3);
 
-        /**
-         * firstItems: [null, null, 0, 1]
-         * lastItems: [2, 3, null, null]
-         * Expected 3 - index 3 at lastItems index 1 in the underlying implementation
-         */
         assertEquals(expected3, actual3);
     }
 
@@ -161,7 +92,6 @@ public class ArrayDequeTest<T> {
 
         int N = 10;
 
-        //conceptual array = [9, 7, 5, 3, 1, 0, 2, 4, 6, 8]
         for (int i = 0; i < N; i += 1) {
             if (i % 2 == 0) {
                 AD.addLast(i);
@@ -259,21 +189,31 @@ public class ArrayDequeTest<T> {
 
     @Test
     public void testRemoveFirstResize() {
-        int addAmount = 10;
+        int addAmount = 40;
         ArrayDeque<Integer> AD = new ArrayDeque<>();
 
         for (int i = 0; i < addAmount; i += 1) {
             AD.addFirst(i);
         }
         AD.printDeque();
-        AD.removeFirst();
-        AD.removeFirst();
-        AD.removeFirst();
-        int expected6 = 6;
-        int actual6 = AD.removeFirst();
+
+        for (int i = 0; i < 20; i += 1) {
+            AD.removeFirst();
+        }
+        int expected19 = 19;
+        int actual19 = AD.get(0);
 
         AD.printDeque();
-        assertEquals(expected6, actual6);
+        assertEquals(expected19, actual19);
+
+        for (int i = 0; i < 16; i += 1) {
+            AD.removeFirst();
+        }
+
+        int expected3 = 3;
+        int actual3 = AD.get(0);
+        AD.printDeque();
+        assertEquals(expected3, actual3);
     }
 
     @Test
