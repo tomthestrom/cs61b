@@ -19,13 +19,29 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
     * Returns the maximum element in the deque as governed by the comparator;
     */
     public T max() {
-        return null;
+        return maxHelper(comparator);
     }
 
     /*
      * Returns the maximum element in the deque as given by the parameter Comparator c
      */
     public T max(Comparator<T> c) {
-        return null;
+        return maxHelper(c);
+    }
+
+    /**
+     * Iterates over elements applying the compare function of the passed in Comparator
+     * @param c
+     */
+    private T maxHelper(Comparator<T> c) {
+        T maxEl = get(0);
+
+        for (int i = 1; i < size(); i++) {
+            if (c.compare(get(i), maxEl) > 0) {
+                maxEl = get(i);
+            }
+        }
+
+        return maxEl;
     }
 }
