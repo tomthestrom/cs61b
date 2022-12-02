@@ -294,8 +294,11 @@ public class LinkedListDeque<T> implements Iterable<T> {
             return false;
         }
 
-        for (int i = 0; i < size; i += 1) {
-            if (get(i) != ((LinkedListDeque<?>) o).get(i)) {
+        Iterator curObj = iterator();
+        Iterator compObj = ((LinkedListDeque<?>) o).iterator();
+
+        while(curObj.hasNext() && compObj.hasNext()) {
+            if (curObj.next() != compObj.next()) {
                 return false;
             }
         }
@@ -309,13 +312,9 @@ public class LinkedListDeque<T> implements Iterable<T> {
      */
     public void printDeque() {
         if (size > 0) {
-            DequeNode nextNode = sentinel.next;
-            StringBuilder itemString = new StringBuilder(String.valueOf(nextNode.item));
-            int i = 0;
-            while (i < size - 1) {
-                nextNode = nextNode.next;
-                itemString.append(" ").append(nextNode.item);
-                i += 1;
+            StringBuilder itemString = new StringBuilder();
+            for (T itemValue : this) {
+                itemString.append(itemValue).append(" ");
             }
 
             System.out.println(itemString);
