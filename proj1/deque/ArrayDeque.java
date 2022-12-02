@@ -108,11 +108,12 @@ public class ArrayDeque<T> implements Iterable<T> {
      * Once all the items have been printed, prints out a new line.
      */
     public void printDeque() {
-        if (size() > 0) {
-            StringBuilder itemString = new StringBuilder(String.valueOf(get(0)));
-            for (int i = 1; i < size(); i += 1) {
-                itemString.append(" ").append(get(i));
+        if (size > 0) {
+            StringBuilder itemString = new StringBuilder();
+            for (T itemValue : this) {
+                itemString.append(itemValue).append(" ");
             }
+
             System.out.println(itemString);
         }
 
@@ -182,8 +183,11 @@ public class ArrayDeque<T> implements Iterable<T> {
             return false;
         }
 
-        for (int i = 0; i < size; i += 1) {
-            if (get(i) != ((ArrayDeque<?>) o).get(i)) {
+        Iterator curObj = iterator();
+        Iterator compObj = ((ArrayDeque<?>) o).iterator();
+
+        while(curObj.hasNext() && compObj.hasNext()) {
+            if (curObj.next() != compObj.next()) {
                 return false;
             }
         }
