@@ -1,6 +1,8 @@
 package deque;
 
-public class ArrayDeque<T> {
+import java.util.Iterator;
+
+public class ArrayDeque<T> implements Iterable<T> {
 
     /**
      * Stores items added to the front and to the end
@@ -26,6 +28,31 @@ public class ArrayDeque<T> {
      */
     private int ITEMS_MIN_SIZE = 8;
 
+    private class ArrayDequeIterator implements Iterator<T> {
+
+
+        /*
+         * Index of the currently visited position
+         */
+        private int vizPos;
+
+
+        private ArrayDequeIterator() {
+            vizPos = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return vizPos < size;
+        }
+
+        @Override
+        public T next() {
+            T nextItem = get(vizPos);
+            vizPos++;
+
+            return nextItem;
+        }
+    }
     public ArrayDeque() {
         circularArray = (T[]) new Object[ITEMS_MIN_SIZE];
         size = 0;
@@ -162,6 +189,11 @@ public class ArrayDeque<T> {
         }
 
         return true;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayDequeIterator();
     }
 
     private int getCircularArrayMiddle() {

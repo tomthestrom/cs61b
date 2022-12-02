@@ -292,4 +292,21 @@ public class ArrayDequeTest<T> {
 
         assertFalse(AD1.equals(AD2));
     }
+    @Test
+    public void testIterator() {
+        int N = 1000;
+        ArrayDeque<Integer> ad1 = new ArrayDeque<>();
+        for (int i = 0; i < N; i++) {
+            ad1.addLast(i);
+        }
+
+        int expected = 0;
+        for (int i: ad1) {
+            assertEquals(expected, i);
+            expected++;
+        }
+
+        //check that expected reached N - all iterations ran
+        assertEquals(N, expected);
+    }
 }
