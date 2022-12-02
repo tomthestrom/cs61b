@@ -238,4 +238,22 @@ public class LinkedListDequeTest {
 
         assertTrue(lld1.equals(lld2));
     }
+
+    @Test
+    public void testIterator() {
+       int N = 1000;
+       LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+       for (int i = 0; i < N; i++) {
+           lld1.addLast(i);
+       }
+
+       int expected = 0;
+       for (int i: lld1) {
+           assertEquals(expected, i);
+           expected++;
+       }
+
+       //check that expected reached N - all iterations ran
+       assertEquals(N, expected);
+    }
 }

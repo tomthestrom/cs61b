@@ -1,10 +1,12 @@
 package deque;
 
+import java.util.Iterator;
+
 /**
  * Deque implementation based on specs for project1... and some tuning :)
  * @param <T>
  */
-public class LinkedListDeque<T> {
+public class LinkedListDeque<T> implements Iterable<T> {
 
     /**
      * One DequeNode - a unit used by LinkedListDeque :)
@@ -21,6 +23,36 @@ public class LinkedListDeque<T> {
             next = n;
         }
     }
+
+    private class LinkedListeDequeIterator implements Iterator<T> {
+
+        /*
+        * Index of the currently visited position
+        */
+        private int vizPos;
+
+        /**
+         * HEAD pointer
+         */
+        private DequeNode<T> nextNode;
+
+        private LinkedListeDequeIterator() {
+            vizPos = 0;
+        }
+        @Override
+        public boolean hasNext() {
+            return vizPos < size;
+        }
+
+        @Override
+        public T next() {
+            nextNode = vizPos == 0 ? sentinel.next : nextNode.next;
+            vizPos += 1;
+
+            return nextNode.item;
+        }
+    }
+
 
     private DequeNode<T> sentinel;
     private int size;
@@ -163,9 +195,14 @@ public class LinkedListDeque<T> {
         return nextNode.item;
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new LinkedListeDequeIterator();
+    }
+
     /*
-    Helper method for getRecursive
-     */
+        Helper method for getRecursive
+         */
     private DequeNode getRecFromFront(DequeNode nextNode, int index) {
         if (index == 0) {
             return nextNode;
