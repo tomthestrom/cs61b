@@ -6,7 +6,7 @@ import java.util.Iterator;
  * Deque implementation based on specs for project1... and some tuning :)
  * @param <T>
  */
-public class LinkedListDeque<T> implements Iterable<T> {
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
     /**
      * One DequeNode - a unit used by LinkedListDeque :)
@@ -63,6 +63,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
     }
 
     /* adds an item to the beginning */
+    @Override
     public void addFirst(T item) {
         DequeNode<T> newNode = new DequeNode<>(item, sentinel, sentinel.next);
 
@@ -83,6 +84,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
     }
 
     /* appends an item to the end */
+    @Override
     public void addLast(T item) {
         DequeNode<T> newNode = new DequeNode<>(item, sentinel.prev, sentinel);
 
@@ -102,15 +104,18 @@ public class LinkedListDeque<T> implements Iterable<T> {
         size += 1;
     }
 
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
     /* removes and returns the first element of the deque */
+    @Override
     public T removeFirst() {
         if (isEmpty()) {
             return null;
@@ -136,6 +141,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
     }
 
     /* removes and returns the last element of the deque */
+    @Override
     public T removeLast() {
         if (isEmpty()) {
             return null;
@@ -164,6 +170,7 @@ public class LinkedListDeque<T> implements Iterable<T> {
      * @param index
      * @return
      */
+    @Override
     public T get(int index) {
         if (index > size - 1) {
             throw new IndexOutOfBoundsException();
@@ -198,6 +205,46 @@ public class LinkedListDeque<T> implements Iterable<T> {
     @Override
     public Iterator<T> iterator() {
         return new LinkedListeDequeIterator();
+    }
+
+    /*
+       Returns whether or not the parameter o is equal to the deque.
+        o is considered equal if it is a deque and if it contains the same contents
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LinkedListDeque) || size() != ((LinkedListDeque<?>) o).size()) {
+            return false;
+        }
+
+        Iterator curObj = iterator();
+        Iterator compObj = ((LinkedListDeque<?>) o).iterator();
+
+        while(curObj.hasNext() && compObj.hasNext()) {
+            if (curObj.next() != compObj.next()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Prints the items in the deque from first to last, separated by a space.
+     * Once all the items have been printed, prints out a new line.
+     */
+    @Override
+    public void printDeque() {
+        if (size > 0) {
+            StringBuilder itemString = new StringBuilder();
+            for (T itemValue : this) {
+                itemString.append(itemValue).append(" ");
+            }
+
+            System.out.println(itemString);
+        }
+
+        System.out.println();
     }
 
     /*
@@ -285,41 +332,4 @@ public class LinkedListDeque<T> implements Iterable<T> {
     }
 
 
-    /*
-       Returns whether or not the parameter o is equal to the deque.
-        o is considered equal if it is a deque and if it contains the same contents
-     */
-    public boolean equals(Object o) {
-        if (!(o instanceof LinkedListDeque) || size() != ((LinkedListDeque<?>) o).size()) {
-            return false;
-        }
-
-        Iterator curObj = iterator();
-        Iterator compObj = ((LinkedListDeque<?>) o).iterator();
-
-        while(curObj.hasNext() && compObj.hasNext()) {
-            if (curObj.next() != compObj.next()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Prints the items in the deque from first to last, separated by a space.
-     * Once all the items have been printed, prints out a new line.
-     */
-    public void printDeque() {
-        if (size > 0) {
-            StringBuilder itemString = new StringBuilder();
-            for (T itemValue : this) {
-                itemString.append(itemValue).append(" ");
-            }
-
-            System.out.println(itemString);
-        }
-
-        System.out.println();
-    }
 }

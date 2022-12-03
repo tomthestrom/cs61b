@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<T> implements Iterable<T> {
+public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
     /**
      * Stores items added to the front and to the end
@@ -65,6 +65,7 @@ public class ArrayDeque<T> implements Iterable<T> {
      * insert direction:
      * [<----------- start\ /end<------------------]
      */
+    @Override
     public void addFirst(T item) {
         resizeUpIfNecessary();
 
@@ -81,6 +82,7 @@ public class ArrayDeque<T> implements Iterable<T> {
      * insert direction:
      * [-----------> end\ /start------------------>]
      */
+    @Override
     public void addLast(T item) {
         resizeUpIfNecessary();
 
@@ -92,6 +94,7 @@ public class ArrayDeque<T> implements Iterable<T> {
     /**
      * Size provided to the user of ArrayDeque #Plateau's cave
      */
+    @Override
     public int size() {
         return size;
     }
@@ -99,6 +102,7 @@ public class ArrayDeque<T> implements Iterable<T> {
     /**
      * True if no items stored
      */
+    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -107,6 +111,7 @@ public class ArrayDeque<T> implements Iterable<T> {
      * Prints the items in the deque from first to last, separated by a space.
      * Once all the items have been printed, prints out a new line.
      */
+    @Override
     public void printDeque() {
         if (size > 0) {
             StringBuilder itemString = new StringBuilder();
@@ -120,6 +125,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         System.out.println();
     }
 
+    @Override
     public T removeFirst() {
         if (isEmpty()) {
             return null;
@@ -137,6 +143,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         return firstItem;
     }
 
+    @Override
     public T removeLast() {
         if (isEmpty()) {
             return null;
@@ -161,6 +168,7 @@ public class ArrayDeque<T> implements Iterable<T> {
      * Gets item by index
      * Cycling from right to left
      */
+    @Override
     public T get(int index) {
         if (index >= size()) {
             throw new IndexOutOfBoundsException();
@@ -178,6 +186,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         o is considered equal if it is a deque and if it contains the same contents
         //compares to ArrayDeques for now
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof ArrayDeque<?>) || size() != ((ArrayDeque<?>) o).size()) {
             return false;
