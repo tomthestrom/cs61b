@@ -3,6 +3,10 @@ package bstmap;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ * Implements a BSTMap as specified by MAP61B interface
+ * Core data structure is a binary search tree
+ */
 public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
     /**
      * The root of the tree
@@ -41,19 +45,75 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
             this.value = value;
         }
     }
+
+    /**
+     * Removes all items from the BST
+     */
     @Override
     public void clear() {
-
+        root = null;
+        size = 0;
     }
 
+    /**
+     * Returns true if the BST contains the requested key
+     */
     @Override
     public boolean containsKey(K key) {
-        return false;
+        return containsKeyHelper(root, key);
     }
 
+    /**
+     * Recursively traverses the tree in search of the requested key, returns
+     * true if found, false otherwise
+     */
+    private boolean containsKeyHelper(BSTNode node, K key) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.key.compareTo(key) == 0) {
+            return true;
+        }
+
+        boolean searchLeft = node.key.compareTo(key) > 0;
+
+        if (searchLeft) {
+            return containsKeyHelper(node.left, key);
+        } else {
+            return containsKeyHelper(node.right, key);
+        }
+    }
+
+    /**
+     * Returns the value to which the specified key is mapped, or null if this
+     * map contains no mapping for the key.
+     */
     @Override
     public V get(K key) {
-        return null;
+        return getHelper(root, key);
+    }
+
+    /**
+     * Recursively traverses the tree in search of the requested key, returns its value
+     */
+    private V getHelper(BSTNode node, K key) {
+        if (node == null) {
+            return null;
+        }
+
+        if (node.key.compareTo(key) == 0) {
+            return (V) node.value;
+        }
+
+        boolean searchLeft = node.key.compareTo(key) > 0;
+
+        if (searchLeft) {
+            return getHelper(node.left, key);
+        } else {
+            return getHelper(node.right, key);
+        }
+
     }
 
     /**
@@ -70,7 +130,6 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
     @Override
     public void put(K key, V value) {
         root = putHelper(root, key, value);
-        size++;
     }
 
     /**
@@ -78,8 +137,18 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V> {
      */
     private BSTNode<K, V> putHelper(BSTNode<K, V> node, K key, V value) {
         if (node == null) {
+            size++;
             return new BSTNode<>(key, value);
         }
+
+        //in case the key already exists, we just assing a new value
+        boolean insertHere = node.key.compareTo(key) == 0;
+
+        if (insertHere) {
+           node.value = value;
+           return node;
+        }
+
         boolean insertLeft = node.key.compareTo(key) > 0;
 
         if (insertLeft) {
