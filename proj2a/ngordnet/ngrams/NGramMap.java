@@ -63,9 +63,8 @@ public class NGramMap {
         int currYear = startYear;
 
         while (currYear <= endYear) {
-            //there's a record of this year and the word exists within the WordMap belonging to the year
-            if (wordsInYears.containsKey(currYear) && wordsInYears.get(currYear).containsKey(word)) {
-                double wordCount = wordsInYears.get(currYear).get(word).doubleValue();
+            if (yearRecordExists(currYear) && yearContainsWord(currYear, word)) {
+                double wordCount = wordCountInYear(currYear, word);
                 counts.put(currYear, wordCount);
             }
             currYear++;
@@ -77,7 +76,15 @@ public class NGramMap {
      * Returns a defensive copy of the total number of words recorded per year in all volumes.
      */
     public TimeSeries totalCountHistory() {
-        return null;
+        TimeSeries totalCount = new TimeSeries();
+
+        for (Map.Entry<Integer, Double> entry : counts.entrySet()) {
+            Integer year = entry.getKey();
+            Double wordsPerYear = entry.getValue();
+
+            totalCount.put(year, wordsPerYear);
+        }
+        return totalCount;
     }
 
     /**
@@ -85,7 +92,18 @@ public class NGramMap {
      * all words recorded in that year.
      */
     public TimeSeries weightHistory(String word) {
-        return null;
+        TimeSeries relativeFreq = new TimeSeries();
+
+        for (Map.Entry<Integer, Double> entry : counts.entrySet()) {
+            Integer year = entry.getKey();
+
+            if (yearRecordExists(year) && yearContainsWord(year, word)) {
+                double wordFrequency = wordCountInYear(year, word) / totalWordsInYear(year);;
+                relativeFreq.put(year, wordFrequency);
+            }
+        }
+
+        return relativeFreq;
     }
 
     /**
@@ -93,14 +111,44 @@ public class NGramMap {
      * and ENDYEAR, inclusive of both ends.
      */
     public TimeSeries weightHistory(String word, int startYear, int endYear) {
-        return null;
+        TimeSeries relativeFreq = new TimeSeries();
+        int currYear = startYear;
+
+        while (currYear <= endYear) {
+            if (yearRecordExists(currYear) && yearContainsWord(currYear, word)) {
+                double wordFrequency = wordCountInYear(currYear, word) / totalWordsInYear(currYear);
+                relativeFreq.put(currYear, wordFrequency);
+            }
+
+            currYear++;
+        }
+
+        return relativeFreq;
     }
 
     /**
      * Returns the summed relative frequency per year of all words in WORDS.
      */
     public TimeSeries summedWeightHistory(Collection<String> words) {
-        return null;
+        TimeSeries summedFreq = new TimeSeries();
+
+        for (Map.Entry<Integer, WordsCountMap> entry : wordsInYears.entrySet()) {
+            Integer year = entry.getKey();
+            WordsCountMap wordsCountMap = entry.getValue();
+            double summedWordCount = 0;
+
+            for (String word : words) {
+                if (wordsCountMap.containsKey(word)) {
+                    summedWordCount += wordCountInYear(year, word);
+                }
+            }
+
+            if (summedWordCount > 0) {
+                summedFreq.put(year, summedWordCount / totalWordsInYear(year));
+            }
+        }
+
+        return summedFreq;
     }
 
     /**
@@ -110,9 +158,33 @@ public class NGramMap {
      */
     public TimeSeries summedWeightHistory(Collection<String> words,
                                           int startYear, int endYear) {
-        return null;
+
+        TimeSeries summedFreq = new TimeSeries();
+        int currYear = startYear;
+
+        while (currYear <= endYear) {
+            double summedWordCount = 0;
+
+            if (yearRecordExists(currYear)) {
+                for (String word : words) {
+                    if (yearContainsWord(currYear, word)) {
+                        summedWordCount += wordCountInYear(currYear, word);
+                    }
+                }
+            }
+
+            if (summedWordCount > 0) {
+                summedFreq.put(currYear, summedWordCount / totalWordsInYear(currYear));
+            }
+
+            currYear++;
+        }
+        return summedFreq;
     }
 
+    /**
+     * Sets up the HashMap wordsInYears
+     */
     private void setWordsInYearsFromFile(String fileName) {
         WordsCountMap wordsCountMap;
         In in = new In(fileName);
@@ -142,6 +214,9 @@ public class NGramMap {
         }
     }
 
+    /**
+     * Sets up the TimeSeries counts
+     */
     private void setCountsFromFile(String fileName) {
         In in = new In(fileName);
         ArrayList<String> line;
@@ -149,11 +224,32 @@ public class NGramMap {
         double wordCount;
 
         while (in.hasNextLine()) {
+            //unfortunately In utility class doesn't contain a nice method to spec separator, gotta read file like this
             line = Stream.of(in.readLine().split(",")).collect(Collectors.toCollection(ArrayList<String>::new));
             year =  Integer.parseInt(line.get(0));
             wordCount = Double.parseDouble(line.get(1));
 
             counts.put(year, wordCount);
         }
+    }
+
+    private boolean yearContainsWord(int year, String word) {
+        return wordsInYears.get(year).containsKey(word);
+    }
+
+    private boolean yearRecordExists(int year) {
+        return wordsInYears.containsKey(year);
+    }
+
+    private double wordCountInYear(int year, String word) {
+        return wordsInYears.get(year).get(word).doubleValue();
+    }
+
+    private double totalWordsInYear(int year) {
+        if (yearRecordExists(year)) {
+            return counts.get(year);
+        }
+
+        return 0;
     }
 }
