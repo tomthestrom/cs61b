@@ -26,11 +26,25 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     /* Instance Variables */
+    /**
+     * Holds the instances of bucket - anything that implements a Collection, like LL, AL, ...
+     */
     private Collection<Node>[] buckets;
+
+    /**
+     * Default size of the buckets array
+     */
     protected static int DEFAULT_INIT_SIZE = 16;
 
+    /**
+     * Nr. of items stored in MyHashMap
+     */
     private int size;
 
+    /**
+     * Default Load Factor
+     * Defined as elements in the map / number of buckets
+     */
     protected static double DEFAULT_LF = .75;
 
     /**
@@ -41,15 +55,17 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     /** Constructors */
     public MyHashMap() {
-        buckets = new ArrayList[DEFAULT_INIT_SIZE];
+        buckets = createTable(DEFAULT_INIT_SIZE);
         size = 0;
         maxLF = DEFAULT_LF;
+        fillWithBuckets();
     }
 
     public MyHashMap(int initialSize) {
-        buckets = new ArrayList[initialSize];
+        buckets = createTable(initialSize);
         size = 0;
         maxLF = DEFAULT_LF;
+        fillWithBuckets();
     }
 
     /**
@@ -60,9 +76,10 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param maxLoad maximum load factor
      */
     public MyHashMap(int initialSize, double maxLoad) {
-        buckets = new ArrayList[initialSize];
+        buckets = createTable(initialSize);
         size = 0;
         maxLF = maxLoad;
+        fillWithBuckets();
     }
 
     /**
@@ -86,12 +103,18 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      *
      * Override this method to use different data structures as
      * the underlying bucket type
-     *
-     * BE SURE TO CALL THIS FACTORY METHOD INSTEAD OF CREATING YOUR
-     * OWN BUCKET DATA STRUCTURES WITH THE NEW OPERATOR!
      */
     protected Collection<Node> createBucket() {
         return new LinkedList<>();
+    }
+
+    /**
+     * Populates the buckets array with a new bucket for each index
+     */
+    private void fillWithBuckets() {
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = createBucket();
+        }
     }
 
     /**
@@ -109,28 +132,69 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     @Override
     public void clear() {
-        buckets = null;
+        fillWithBuckets();
         size = 0;
     }
 
     @Override
     public boolean containsKey(K key) {
+        int keyHash = hash(key);
+
+        Iterator<Node> iterator  = buckets[keyHash].iterator();
+        Node currNode;
+
+        while (iterator.hasNext()) {
+            currNode = iterator.next();
+
+            if (currNode.key.equals(key)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     @Override
     public V get(K key) {
+        int keyHash = hash(key);
+
+        Iterator<Node> iterator  = buckets[keyHash].iterator();
+        Node currNode;
+
+        while (iterator.hasNext()) {
+            currNode = iterator.next();
+
+            if (currNode.key.equals(key)) {
+                return currNode.value;
+            }
+        }
+
         return null;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public void put(K key, V value) {
+        int keyHash = hash(key);
 
+        Iterator<Node> iterator  = buckets[keyHash].iterator();
+        Node currNode;
+
+        while (iterator.hasNext()) {
+            currNode = iterator.next();
+
+            if (currNode.key.equals(key)) {
+                currNode.value = value;
+                return;
+            }
+        }
+
+        buckets[keyHash].add(new Node(key, value));
+        size++;
     }
 
     @Override
@@ -153,4 +217,16 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         throw new UnsupportedOperationException();
     }
 
+
+    /**
+     * Copied from: https://algs4.cs.princeton.edu/34hash/LinearProbingHashST.java.html
+     * hash function for keys - returns value between 0 and m-1
+     */
+    private int hash(K key) {
+        return (key.hashCode() & 0x7fffffff) % buckets.length;
+    }
+
+    private boolean shouldResizeBuckets() {
+        return (float) size() / buckets.length >= maxLF;
+    }
 }
