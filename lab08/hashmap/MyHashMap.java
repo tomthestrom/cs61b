@@ -37,6 +37,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     protected static int DEFAULT_INIT_SIZE = 16;
 
     /**
+     * Default Resize Factor of buckets[]
+     */
+    private static int RESIZE_FACTOR = 2;
+
+    /**
      * Nr. of items stored in MyHashMap
      */
     private int size;
@@ -58,14 +63,14 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         buckets = createTable(DEFAULT_INIT_SIZE);
         size = 0;
         maxLF = DEFAULT_LF;
-        fillWithBuckets();
+        fillWithBuckets(buckets);
     }
 
     public MyHashMap(int initialSize) {
         buckets = createTable(initialSize);
         size = 0;
         maxLF = DEFAULT_LF;
-        fillWithBuckets();
+        fillWithBuckets(buckets);
     }
 
     /**
@@ -79,7 +84,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         buckets = createTable(initialSize);
         size = 0;
         maxLF = maxLoad;
-        fillWithBuckets();
+        fillWithBuckets(buckets);
     }
 
     /**
@@ -111,7 +116,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /**
      * Populates the buckets array with a new bucket for each index
      */
-    private void fillWithBuckets() {
+    private void fillWithBuckets(Collection<Node>[] buckets) {
         for (int i = 0; i < buckets.length; i++) {
             buckets[i] = createBucket();
         }
@@ -130,15 +135,22 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return new Collection[tableSize];
     }
 
+    /**
+     * Removes all items, resets bucket size to default value
+     */
     @Override
     public void clear() {
-        fillWithBuckets();
+        buckets = createTable(DEFAULT_INIT_SIZE);
+        fillWithBuckets(buckets);
         size = 0;
     }
 
+    /**
+     * Searches for the key, true if found
+     */
     @Override
     public boolean containsKey(K key) {
-        int keyHash = hash(key);
+        int keyHash = hash(key, buckets.length);
 
         Iterator<Node> iterator  = buckets[keyHash].iterator();
         Node currNode;
@@ -154,9 +166,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return false;
     }
 
+    /**
+     * Returns the value associated with the key if key found, false otherwise
+     */
     @Override
     public V get(K key) {
-        int keyHash = hash(key);
+        int keyHash = hash(key, buckets.length);
 
         Iterator<Node> iterator  = buckets[keyHash].iterator();
         Node currNode;
@@ -172,14 +187,20 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return null;
     }
 
+    /**
+     * Nr of elements stored within MyHashMap
+     */
     @Override
     public int size() {
         return size;
     }
 
+    /**
+     * Stores the given key-value pair, resizes the bucket array if it exceeds the max load factor
+     */
     @Override
     public void put(K key, V value) {
-        int keyHash = hash(key);
+        int keyHash = hash(key, buckets.length);
 
         Iterator<Node> iterator  = buckets[keyHash].iterator();
         Node currNode;
@@ -191,6 +212,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
                 currNode.value = value;
                 return;
             }
+        }
+
+        if (shouldResizeBuckets()) {
+            resizeBuckets(RESIZE_FACTOR);
+            //buckets size changed - get new hash
+            keyHash = hash(key, buckets.length);
         }
 
         buckets[keyHash].add(new Node(key, value));
@@ -222,11 +249,36 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Copied from: https://algs4.cs.princeton.edu/34hash/LinearProbingHashST.java.html
      * hash function for keys - returns value between 0 and m-1
      */
-    private int hash(K key) {
-        return (key.hashCode() & 0x7fffffff) % buckets.length;
+    private int hash(K key, int nrOfBuckets) {
+        return (key.hashCode() & 0x7fffffff) % nrOfBuckets;
     }
 
+    /**
+     * Returns true if elements to buckets ratio larger than or equal to max load factor
+     */
     private boolean shouldResizeBuckets() {
         return (float) size() / buckets.length >= maxLF;
+    }
+
+    /**
+     * Handles resizing of the buckets array
+     * @param resizeFactor
+     */
+    private void resizeBuckets(int resizeFactor) {
+        Collection<Node>[] newBuckets = createTable(buckets.length * resizeFactor);
+        fillWithBuckets(newBuckets);
+
+        for (Collection<Node> bucket : buckets) {
+            Iterator<Node>iterator = bucket.iterator();
+            Node currNode;
+            int keyHash;
+
+            while (iterator.hasNext()) {
+                currNode = iterator.next();
+                keyHash = hash(currNode.key, newBuckets.length);
+                newBuckets[keyHash].add(currNode);
+            }
+        }
+        buckets = newBuckets;
     }
 }
