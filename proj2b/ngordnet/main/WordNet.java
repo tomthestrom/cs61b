@@ -9,32 +9,38 @@ public class WordNet {
     /**
      * Keeps track of the id associated with the word
      */
-    private WordToIdsMap<String, HashSet<Integer>> wordToIdsMap;
+    private WordToIdsMap wordToIdsMap;
+
+    /**
+     * Keeps track of the words associated with the id
+     */
+    private IdToWordsMap idToWordsMap;
+
+    /**
+     * Keeps track of id to id connection hypernym -> hyponym
+     */
     private Graph graph;
 
     public WordNet(String synsetsFileName, String hyponymsFileName) {
         graph = new Graph();
-        wordToIdsMap = new WordToIdsMap<>();
+        wordToIdsMap = new WordToIdsMap();
+        idToWordsMap = new IdToWordsMap();
+
         //build the graph -> add all the edges
     }
 
     private void addWordToMap(String word, Integer id) {
-        HashSet<Integer> idSet;
-        if (wordToIdsMap.containsKey(word)) {
-            idSet = wordToIdsMap.get(word);
-            idSet.add(id);
-            return;
-        }
-
-        idSet = new HashSet<>();
-        idSet.add(id);
-        wordToIdsMap.put(word, idSet);
+        wordToIdsMap.addWordIdPair(word, id);
+        idToWordsMap.addIdWordPair(id, word);
     }
 
-    private HashSet<Integer> getWordIds(String word) {
+    private HashSet<Integer> getWordIdSet(String word) {
         return wordToIdsMap.get(word);
     }
 
+    private HashSet<String> getIdWordSet(int id) {
+        return idToWordsMap.get(id);
+    }
     //graph helper functions
 
 }
