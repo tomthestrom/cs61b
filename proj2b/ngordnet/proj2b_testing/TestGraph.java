@@ -64,6 +64,8 @@ public class TestGraph {
         expected = new HashSet<>(Arrays.asList(2, 3, 4, 5, 11, 12, 13));
 
         assertEquals(expected, graph.getAllChildren(1));
+        //empty
+        assertEquals(new HashSet<>(), graph.getAllChildren(1000));
     }
 
 }

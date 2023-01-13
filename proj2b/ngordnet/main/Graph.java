@@ -26,9 +26,11 @@ public class Graph {
     public HashSet<Integer> getAllChildren(int parentId) {
        HashSet<Integer> children = new HashSet<>();
 
-       for (int childId: getNode(parentId)) {
-           children.addAll(getAllChildrenHelper(childId, children));
-       }
+       if (getNode(parentId) != null) {
+           for (int childId: getNode(parentId)) {
+               children.addAll(getAllChildrenHelper(childId, children));
+           }
+        }
        return children;
     }
 
