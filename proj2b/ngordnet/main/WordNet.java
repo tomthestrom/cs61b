@@ -11,7 +11,7 @@ public class WordNet {
     //wrapper for a graph
 
     /**
-     * Keeps track of the id associated with the word
+     * Keeps track of the ids associated with the word
      */
     private WordToIdsMap wordToIdsMap;
 
@@ -63,6 +63,26 @@ public class WordNet {
 
             for (String word: words) {
                 addWordToMap(word, id);
+            }
+        }
+    }
+
+    /**
+     * Sets id to id mappings from the provided hyponyms.txt
+     * @param fileName
+     */
+    private void setGraphFromFile(String fileName) {
+        In in = new In(fileName);
+        ArrayList<String> line;
+        int parentId;
+
+        while (in.hasNextLine()) {
+            line = Stream.of(in.readLine().split(",")).collect(Collectors.toCollection(ArrayList<String>::new));
+            parentId =  Integer.parseInt(line.get(0));
+
+            for (int i = 1; i < line.size(); i++) {
+               int childId = Integer.parseInt(line.get(i));
+               graph.addNode(parentId, childId);
             }
         }
     }
