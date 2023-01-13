@@ -1,7 +1,11 @@
 package ngordnet.main;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import edu.princeton.cs.algs4.In;
 
 public class WordNet {
     //wrapper for a graph
@@ -26,6 +30,7 @@ public class WordNet {
         wordToIdsMap = new WordToIdsMap();
         idToWordsMap = new IdToWordsMap();
 
+        setMapsFromFile(synsetsFileName);
         //build the graph -> add all the edges
     }
 
@@ -41,6 +46,24 @@ public class WordNet {
     private HashSet<String> getIdWordSet(int id) {
         return idToWordsMap.get(id);
     }
-    //graph helper functions
 
+    /**
+     * Sets both word to ids and ids to word mappings from the provided synsets.txt file
+     * @param fileName
+     */
+    private void setMapsFromFile(String fileName) {
+        In in = new In(fileName);
+        ArrayList<String> line;
+        int id;
+
+        while (in.hasNextLine()) {
+            line = Stream.of(in.readLine().split(",")).collect(Collectors.toCollection(ArrayList<String>::new));
+            id =  Integer.parseInt(line.get(0));
+            String[] words = (line.get(1)).trim().split("\\s+");
+
+            for (String word: words) {
+                addWordToMap(word, id);
+            }
+        }
+    }
 }
