@@ -2,6 +2,7 @@ package ngordnet.main;
 
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,7 +32,17 @@ public class WordNet {
         idToWordsMap = new IdToWordsMap();
 
         setMapsFromFile(synsetsFileName);
-        //build the graph -> add all the edges
+        setGraphFromFile(hyponymsFileName);
+    }
+
+    /**
+     * Returns all the hyponyms of the hypernym, including the hypernym itself
+     * @param hypernym
+     * @return
+     */
+    public TreeSet<String> getHyponyms(String hypernym) {
+        HashSet<Integer> parentIds = wordToIdsMap.get(hypernym);
+        return null;
     }
 
     private void addWordToMap(String word, Integer id) {
