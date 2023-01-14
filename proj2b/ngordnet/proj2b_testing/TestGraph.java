@@ -17,6 +17,7 @@ public class TestGraph {
     public static final String HYPONYMS_11 = "data/wordnet/hyponyms11.txt";
     public static final String HYPONYMS_14 = "data/wordnet/hyponyms14.txt";
     public static final String HYPONYMS_16 = "data/wordnet/hyponyms16.txt";
+    public static final String HYPONYMS = "data/wordnet/hyponyms.txt";
 
     private Graph getGraphFromFileName(String fileName) {
         Graph graph = new Graph();

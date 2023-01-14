@@ -2,6 +2,7 @@ package ngordnet.main;
 
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,7 +43,7 @@ public class WordNet {
     public TreeSet<String> getHyponyms(String hypernym) {
         HashSet<Integer> parentIds = wordToIdsMap.get(hypernym);
         HashSet<Integer> childIds = new HashSet<>();
-        TreeSet<String> hyponyms = new TreeSet<>();
+        TreeSet<String> hyponyms = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
         for (int parentId : parentIds) {
             //find and get all child ids from the graph
@@ -54,6 +55,36 @@ public class WordNet {
         for (int childId : childIds) {
             //add all words associated with the found child ids to hyponyms set
             hyponyms.addAll(idToWordsMap.get(childId));
+        }
+
+        return hyponyms;
+    }
+
+    /**
+     * Returns the hyponyms that are common between all requested hypernyms (sets intersection)
+     * @param hypernyms
+     */
+    public TreeSet<String> getHyponymsIntersect(List<String> hypernyms) {
+        TreeSet<String> hyponyms;
+        TreeSet<String>[] hyponymsSets = new TreeSet[hypernyms.size()];
+
+        //create hypernyms.size() amount of hyponyms sets
+        for (int i = 0; i < hypernyms.size(); i++) {
+           hyponymsSets[i] = getHyponyms(hypernyms.get(i));
+        }
+
+        if (hyponymsSets[0] == null) {
+            hyponyms = new TreeSet<>();
+        } else {
+            //init hyponyms with the value of the 0th set
+            hyponyms = hyponymsSets[0];
+        }
+
+        //iterate over the rest of hyponyms sets - removing items not found in the other ones
+        for (int i = 1; i < hyponymsSets.length; i++) {
+            if (hyponymsSets[i] != null) {
+                hyponyms.retainAll(hyponymsSets[i]);
+            }
         }
 
         return hyponyms;

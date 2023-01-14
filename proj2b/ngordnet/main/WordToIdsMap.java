@@ -24,4 +24,15 @@ public class WordToIdsMap extends HashMap<String, HashSet<Integer>> {
         idSet.add(id);
         this.put(word, idSet);
     }
+
+    @Override
+    public HashSet get(Object key) {
+        HashSet<Integer> set = super.get(key);
+
+        if (set == null) {
+            set = new HashSet<>();
+        }
+
+        return set;
+    }
 }
