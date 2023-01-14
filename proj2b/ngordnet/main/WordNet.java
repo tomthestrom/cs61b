@@ -36,13 +36,27 @@ public class WordNet {
     }
 
     /**
-     * Returns all the hyponyms of the hypernym, including the hypernym itself
+     * Returns all the hyponyms of the hypernym, including the hypernym itself - in order thx to being a TreeSet
      * @param hypernym
-     * @return
      */
     public TreeSet<String> getHyponyms(String hypernym) {
         HashSet<Integer> parentIds = wordToIdsMap.get(hypernym);
-        return null;
+        HashSet<Integer> childIds = new HashSet<>();
+        TreeSet<String> hyponyms = new TreeSet<>();
+
+        for (int parentId : parentIds) {
+            //find and get all child ids from the graph
+            childIds.addAll(graph.getAllChildren(parentId));
+            //add all words associated with the parent ids to hyponyms set
+            hyponyms.addAll(idToWordsMap.get(parentId));
+        }
+
+        for (int childId : childIds) {
+            //add all words associated with the found child ids to hyponyms set
+            hyponyms.addAll(idToWordsMap.get(childId));
+        }
+
+        return hyponyms;
     }
 
     private void addWordToMap(String word, Integer id) {
