@@ -1,8 +1,8 @@
 package ngordnet.proj2b_testing;
 import ngordnet.main.WordNet;
+import ngordnet.ngrams.NGramMap;
 import org.junit.Test;
 
-import javax.swing.tree.TreeCellRenderer;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -17,6 +17,9 @@ public class WordNetTest {
     public static final String SYNSETS_11 = "data/wordnet/synsets11.txt";
     public static final String SYNSETS_16 = "data/wordnet/synsets16.txt";
     public static final String SYNSETS = "data/wordnet/synsets.txt";
+
+    public static final String WORD_FILE = "./data/ngrams/top_49887_words.csv";
+    public static final String COUNT_FILE = "./data/ngrams/total_counts.csv";
 
     @Test
     public void testGetHyponyms() {
@@ -55,5 +58,20 @@ public class WordNetTest {
         assertEquals(new TreeSet<String>(), wordNet.getHyponymsIntersect(asList("blabla", "blabla")));
         assertEquals(new TreeSet<String>(), wordNet.getHyponymsIntersect(asList("blabla", "action")));
         assertEquals(new TreeSet<String>(), wordNet.getHyponymsIntersect(asList("blabla", "")));
+    }
+
+    @Test
+    public void testGetKPopularHyponyms() {
+        WordNet wordNet = new WordNet(SYNSETS, HYPONYMS);
+        NGramMap nGramMap = new NGramMap(WORD_FILE, COUNT_FILE);
+
+        TreeSet<String> expected = new TreeSet<>();
+        expected.addAll(asList("biscuit", "cake", "kiss", "snap", "wafer"));
+        assertEquals(expected, wordNet.getKPopularHyponyms(nGramMap,asList("food", "cake"), 5, 1950, 1990));
+
+        expected = new TreeSet<>();
+        expected.addAll(asList("amphitheater", "amphitheatre"));
+        // k = 0, result same as getHyponymsIntersect
+        assertEquals(expected, wordNet.getKPopularHyponyms(nGramMap, asList("bowl", "gallery"), 0, 2000, 2001));
     }
 }

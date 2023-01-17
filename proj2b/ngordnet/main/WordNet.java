@@ -1,13 +1,12 @@
 package ngordnet.main;
 
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.MaxPQ;
+import ngordnet.ngrams.NGramMap;
 
 public class WordNet {
     //wrapper for a graph
@@ -43,7 +42,7 @@ public class WordNet {
     public TreeSet<String> getHyponyms(String hypernym) {
         HashSet<Integer> parentIds = wordToIdsMap.get(hypernym);
         HashSet<Integer> childIds = new HashSet<>();
-        TreeSet<String> hyponyms = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        TreeSet<String> hyponyms = new TreeSet<>();
 
         for (int parentId : parentIds) {
             //find and get all child ids from the graph
@@ -88,6 +87,30 @@ public class WordNet {
         }
 
         return hyponyms;
+    }
+
+    /**
+     * Returns k most popular hyponyms between years
+     */
+    public TreeSet<String> getKPopularHyponyms(NGramMap ngramMap, List<String> hypernyms, int k, int startYear, int endYear) {
+        TreeSet<String> requestedHyponyms = getHyponymsIntersect(hypernyms);
+
+        if (k <= 0) {
+            return requestedHyponyms;
+        }
+
+        TreeSet<String> kPopularHyponyms = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        MaxPQ<WordWeight> maxPQ = getWordWeightPQ(ngramMap, requestedHyponyms, startYear, endYear);
+
+        Iterator<WordWeight> iterator = maxPQ.iterator();
+
+        int i = 0;
+        while (iterator.hasNext() && i < k) {
+            kPopularHyponyms.add(iterator.next().word());
+            i++;
+        }
+
+        return kPopularHyponyms;
     }
 
     private void addWordToMap(String word, Integer id) {
@@ -141,5 +164,30 @@ public class WordNet {
                graph.addNode(parentId, childId);
             }
         }
+    }
+
+    /**
+     * Returns a PQ of k amount of WordWeight objects - weight is based on their popularity in NgramMap
+     * between the given years
+     */
+    private MaxPQ<WordWeight> getWordWeightPQ(NGramMap nGramMap, Collection<String> words,  int startYear, int endYear) {
+        MaxPQ<WordWeight> maxPQ = new MaxPQ<>();
+
+        for (String word : words) {
+            /*
+             * nMap - summedWHistory only takes lists as arg
+             * returns a timeseries year -> sum
+             * data() of timeseries returns the sums
+             * .stream().mapToDouble().sum() to get the total sum
+             */
+            double weight = nGramMap.summedWeightHistory(Collections.singletonList(word), startYear, endYear)
+                    .data()
+                    .stream()
+                    .mapToDouble(Double::doubleValue).sum();
+            WordWeight wordWeight = new WordWeight(word, weight);
+
+            maxPQ.insert(wordWeight);
+        }
+        return maxPQ;
     }
 }
