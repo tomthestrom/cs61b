@@ -25,9 +25,12 @@ public class HyponymHandler extends NgordnetQueryHandler {
         List<String> words = q.words();
         int startYear = q.startYear();
         int endYear = q.endYear();
+        int k = q.k();
+
         StringBuilder response = new StringBuilder();
         System.out.println(words);
-        TreeSet<String> hyponyms = wordNet.getHyponymsIntersect(words);
+//        TreeSet<String> hyponyms = wordNet.getHyponymsIntersect(words);
+        TreeSet<String> hyponyms = wordNet.getKPopularHyponyms(words, startYear, endYear);
 
         for (String hyponym : hyponyms) {
             response.append(hyponym);
