@@ -1,7 +1,9 @@
 package ngordnet.main;
 
+import edu.princeton.cs.algs4.MaxPQ;
 import ngordnet.hugbrowsermagic.NgordnetQuery;
 import ngordnet.hugbrowsermagic.NgordnetQueryHandler;
+import ngordnet.ngrams.NGramMap;
 import ngordnet.ngrams.TimeSeries;
 import ngordnet.plotting.Plotter;
 import org.knowm.xchart.XYChart;
@@ -12,8 +14,10 @@ import java.util.TreeSet;
 
 public class HyponymHandler extends NgordnetQueryHandler {
     private WordNet wordNet;
-    public HyponymHandler(WordNet wn) {
+    private NGramMap nGramMap;
+    public HyponymHandler(WordNet wn, NGramMap nGramMap) {
         this.wordNet = wn;
+        this.nGramMap = nGramMap;
     }
     @Override
 
