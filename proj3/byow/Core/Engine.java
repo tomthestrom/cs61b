@@ -2,12 +2,15 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+
+import java.util.Random;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int HEIGHT = 60;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -37,7 +40,7 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
-    public TETile[][] interactWithInputString(String input) {
+    public static TETile[][] interactWithInputString(String input) {
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
@@ -46,7 +49,18 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        WorldTree worldTree = new WorldTree(finalWorldFrame);
+
+        TETile[][] map = worldTree.generateMap(10000);
+
+        return map;
+    }
+
+    public static void main(String[] args) {
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+
+        ter.renderFrame(interactWithInputString("k"));
     }
 }
