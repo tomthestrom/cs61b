@@ -52,7 +52,7 @@ public class Engine {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldTree worldTree = new WorldTree(finalWorldFrame);
 
-        TETile[][] map = worldTree.generateMap(10000);
+        TETile[][] map = worldTree.generateMap(11);
 
         return map;
     }

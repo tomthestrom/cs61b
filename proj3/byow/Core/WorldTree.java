@@ -17,7 +17,14 @@ public class WorldTree {
     private TETile[][] worldGrid;
 
 
-    private static final int TIMES_TO_SPLIT = 30;
+    private static final int TIMES_TO_SPLIT = 33;
+
+    /**
+     * After splitting ENDS, we clean up a bit to have more space
+     * using RandomUtils.bernoulli with a probability of CLEAR_RATIO
+     * the space will be filled with NOTHING tiles
+     */
+    private static final double CLEAR_RATIO =  0.6;
 
     private static class Node implements Comparable<Node> {
 
@@ -46,6 +53,8 @@ public class WorldTree {
          * 1 vertical
          */
         private boolean splitDir;
+
+        private boolean isRoom;
 
         static final int MIN_HEIGHT = 4;
         static final int MIN_WIDTH = 4;
@@ -113,18 +122,6 @@ public class WorldTree {
            return node.children;
         }
 
-        private static void splitAtX(Node node, int splitPoint) {
-            for (int y = node.getyMin(); y < node.getyMax(); y += 1) {
-                node.worldGrid[splitPoint][y] = Tileset.NOTHING;
-            }
-        }
-
-        private static void splitAtY(Node node, int splitPoint) {
-            for (int x = node.getxMin(); x < node.getxMax(); x += 1) {
-                node.worldGrid[x][splitPoint] = Tileset.NOTHING;
-            }
-        }
-
         public int getxMin() {
             return xMin;
         }
@@ -165,6 +162,14 @@ public class WorldTree {
         public int compareTo(Node node) {
             return size() - node.size();
         }
+
+        public boolean isLeaf() {
+            return children == null;
+        }
+
+        public Node[] getChildren() {
+            return children;
+        }
     }
 
     public WorldTree(TETile[][] world) {
@@ -183,7 +188,7 @@ public class WorldTree {
         boolean splitVertical = seed % 2 == 0;
         int splitPoint = getSplitPoint(root, seed, splitVertical);
 
-        Node[] children = Node.splitNode(root, splitPoint, true);
+        Node[] children = Node.splitNode(root, splitPoint, splitVertical);
         splitGridByNode(root, splitPoint, splitVertical);
 
         int timesSplit = 1;
@@ -194,6 +199,8 @@ public class WorldTree {
             nodesToPartition.insert(child);
         }
 
+        Random splitNode = new Random(seed);
+
         //always partitioning the currently largest node
         while (timesSplit < TIMES_TO_SPLIT || nodesToPartition.isEmpty()) {
             //decrement seed with every cut, so we're getting a different rand nr. from Random.uniform
@@ -201,6 +208,12 @@ public class WorldTree {
 
             //get max node from the maxheap
             Node maxNode = nodesToPartition.delMax();
+
+            //randomly don't split maxNode, just remove it from the queue and continue with the next largest
+            //ensures we have some larger clusters of wall tiles
+            if (timesSplit > TIMES_TO_SPLIT / 2 && RandomUtils.bernoulli(splitNode, 0.3)) {
+                continue;
+            }
 
             //if the node is higher than wider - true
             splitVertical = maxNode.height() < maxNode.width();
@@ -218,6 +231,9 @@ public class WorldTree {
 
             timesSplit++;
         }
+
+        Random clearRoom = new Random(seed);
+        clearGrid(root, clearRoom);
 
         return worldGrid;
     }
@@ -271,13 +287,24 @@ public class WorldTree {
         }
     }
 
-
-
     private int getSplitPoint(Node node, int seed, boolean vertical) {
         if (vertical) {
             return RandomUtils.uniform(new Random(seed), node.getxMin() + Node.MIN_WIDTH, node.getxMax() - Node.MIN_WIDTH);
         }
 
          return RandomUtils.uniform(new Random(seed),node.getyMin() + Node.MIN_HEIGHT, node.getyMax() - Node.MIN_HEIGHT);
+    }
+
+    private void clearGrid(Node node, Random clearRoom) {
+        for (Node child : node.getChildren()) {
+
+            if (child.isLeaf() && RandomUtils.bernoulli(clearRoom, CLEAR_RATIO)) {
+                fillGrid(Tileset.NOTHING, child.getxMin(), child.getxMax(), child.getyMin(), child.getyMax());
+            }
+
+            if (!child.isLeaf()) {
+                clearGrid(child, clearRoom);
+            }
+        }
     }
 }
