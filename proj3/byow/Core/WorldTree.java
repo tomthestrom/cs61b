@@ -17,14 +17,16 @@ public class WorldTree {
     private TETile[][] worldGrid;
 
 
-    private static final int TIMES_TO_SPLIT = 33;
+    private static final int TIMES_TO_SPLIT = 27;
 
     /**
      * After splitting ENDS, we clean up a bit to have more space
      * using RandomUtils.bernoulli with a probability of CLEAR_RATIO
      * the space will be filled with NOTHING tiles
      */
-    private static final double CLEAR_RATIO =  0.6;
+    private static final double CLEAR_RATIO =  0.66;
+
+    private static final int DEFAULT_ROOM_WALL_WIDTH = 1;
 
     private static class Node implements Comparable<Node> {
 
@@ -54,7 +56,7 @@ public class WorldTree {
          */
         private boolean splitDir;
 
-        private boolean isRoom;
+        public boolean isRoom;
 
         static final int MIN_HEIGHT = 4;
         static final int MIN_WIDTH = 4;
@@ -211,7 +213,7 @@ public class WorldTree {
 
             //randomly don't split maxNode, just remove it from the queue and continue with the next largest
             //ensures we have some larger clusters of wall tiles
-            if (timesSplit > TIMES_TO_SPLIT / 2 && RandomUtils.bernoulli(splitNode, 0.3)) {
+            if (timesSplit > TIMES_TO_SPLIT / 2.5 && RandomUtils.bernoulli(splitNode, 0.3)) {
                 continue;
             }
 
@@ -234,6 +236,7 @@ public class WorldTree {
 
         Random clearRoom = new Random(seed);
         clearGrid(root, clearRoom);
+        tileRooms(root);
 
         return worldGrid;
     }
@@ -297,13 +300,41 @@ public class WorldTree {
 
     private void clearGrid(Node node, Random clearRoom) {
         for (Node child : node.getChildren()) {
-
             if (child.isLeaf() && RandomUtils.bernoulli(clearRoom, CLEAR_RATIO)) {
                 fillGrid(Tileset.NOTHING, child.getxMin(), child.getxMax(), child.getyMin(), child.getyMax());
+                child.isRoom = false;
+            } else if (child.isLeaf()) {
+               child.isRoom = true;
+            } else {
+                clearGrid(child, clearRoom);
+            }
+        }
+    }
+
+    private void tileRooms(Node node) {
+        for (Node child : node.getChildren()) {
+            if (!child.isLeaf()) {
+                tileRooms(child);
             }
 
-            if (!child.isLeaf()) {
-                clearGrid(child, clearRoom);
+            if (child.isLeaf() && child.isRoom) {
+                //in case the room's x/y min borders the screen beginning
+                boolean isXMinScreenSide = child.getxMin() == 0;
+                boolean isYMinScreenSide = child.getyMin() == 0;
+
+                int xMin = isXMinScreenSide ?
+                        child.getxMin() + DEFAULT_ROOM_WALL_WIDTH :
+                        child.getxMin() + 2 * DEFAULT_ROOM_WALL_WIDTH;
+
+                int yMin = isYMinScreenSide ?
+                        child.getyMin() + DEFAULT_ROOM_WALL_WIDTH :
+                        child.getyMin() + 2 * DEFAULT_ROOM_WALL_WIDTH;
+
+                fillGrid(Tileset.FLOOR,
+                        xMin,
+                        child.getxMax() - DEFAULT_ROOM_WALL_WIDTH,
+                        yMin,
+                        child.getyMax() - DEFAULT_ROOM_WALL_WIDTH);
             }
         }
     }
