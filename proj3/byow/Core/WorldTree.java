@@ -4,6 +4,8 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.MaxPQ;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class WorldTree {
@@ -35,21 +37,15 @@ public class WorldTree {
 
         public Node[] children;
 
-        private TETile[][] worldGrid;
-
         public boolean isVisible;
 
         static final int MIN_HEIGHT = 4;
         static final int MIN_WIDTH = 4;
 
-
-        public Node(TETile[][] worldGrid, int xMin, int xMax, int yMin, int yMax) {
-            this.worldGrid = worldGrid;
-            this.xMin = xMin;
-            this.xMax = xMax;
-            this.yMin = yMin;
-            this.yMax = yMax;
+        protected Node(int xMin, int xMax, int yMin, int yMax) {
+            super(xMin, xMax, yMin, yMax);
         }
+
 
         /**
          * Splits the given node into 2 sub nodes - children
@@ -96,15 +92,11 @@ public class WorldTree {
                 rightYMax = node.getyMax();
             }
 
-           Node leftChild = new Node(node.worldGrid, leftXMin, leftXMax, leftYMin, leftYMax);
-           Node rightChild = new Node(node.worldGrid, rightXMin, rightXMax, rightYMin, rightYMax);
-
-           node.children = new Node[2];
+           Node leftChild = new Node(leftXMin, leftXMax, leftYMin, leftYMax);
+           Node rightChild = new Node(rightXMin, rightXMax, rightYMin, rightYMax);
 
            node.children[0] = leftChild;
            node.children[1] = rightChild;
-
-
 
            return node.children;
         }
@@ -129,11 +121,10 @@ public class WorldTree {
         height = world[0].length;
         worldGrid = world;
 
-        this.root = new Node(world, 0, width, 0, height);
-
+        this.root = new Node(0, width, 0, height);
     }
 
-    public TETile[][] generateRooms(int seed) {
+    public List<Room> generateRooms(int seed) {
         //fill the whole map with wall tiles
         fillGrid(Tileset.WALL, root.getxMin(), root.getxMax(), root.getyMin(), root.getyMax());
 
@@ -188,11 +179,10 @@ public class WorldTree {
         removeRandomLeaves(root, leafClear);
         tileNodes(root);
 
-        return worldGrid;
+        return getRooms(root);
     }
 
-    public TETile[][] generateMap(int seed) {
-       generateRooms(seed);
+    public TETile[][] getWorldGrid() {
        return worldGrid;
     }
 
@@ -314,5 +304,21 @@ public class WorldTree {
                         child.getyMax() - DEFAULT_ROOM_WALL_WIDTH);
             }
         }
+    }
+
+    private List<Room> getRooms(Node node) {
+        ArrayList<Room> rooms = new ArrayList<>();
+        for (Node child : node.getChildren()) {
+           if (!child.isLeaf()) {
+               getRooms(child);
+           }
+
+           if (child.isLeaf() && child.isVisible) {
+                Room room = new Room(child.getxMin(), child.getxMax(), child.getyMin(), child.getyMax());
+               rooms.add(room);
+           }
+        }
+
+        return rooms;
     }
 }

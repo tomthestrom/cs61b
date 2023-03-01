@@ -9,6 +9,13 @@ abstract class AbstractGridObject {
 
     protected int yMax;
 
+    protected AbstractGridObject(int xMin, int xMax, int yMin, int yMax) {
+        this.xMin = xMin;
+        this.xMax = xMax;
+        this.yMin = yMin;
+        this.yMax = yMax;
+    }
+
     public int getxMin() {
         return xMin;
     }

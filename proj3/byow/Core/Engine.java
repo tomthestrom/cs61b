@@ -4,6 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.List;
 import java.util.Random;
 
 public class Engine {
@@ -52,8 +53,9 @@ public class Engine {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldTree worldTree = new WorldTree(finalWorldFrame);
 
-        TETile[][] map = worldTree.generateMap(70);
+        List<Room> rooms = worldTree.generateRooms(70);
 
+        TETile[][] map = worldTree.getWorldGrid();
         return map;
     }
 
