@@ -17,17 +17,20 @@ public class WorldTree {
     private TETile[][] worldGrid;
 
 
-    private static final int TIMES_TO_SPLIT = 27;
+    private static final int TIMES_TO_SPLIT = 60;
 
     /**
      * After splitting ENDS, we clean up a bit to have more space
      * using RandomUtils.bernoulli with a probability of CLEAR_RATIO
      * the space will be filled with NOTHING tiles
      */
-    private static final double CLEAR_RATIO =  0.66;
+    private static final double CLEAR_RATIO =  0.3;
 
     private static final int DEFAULT_ROOM_WALL_WIDTH = 1;
 
+    /**
+     * An instance of Node defines some 2D space on the worldGrid
+     */
     private static class Node implements Comparable<Node> {
 
         private Node parent;
@@ -70,6 +73,13 @@ public class WorldTree {
             this.yMax = yMax;
         }
 
+        /**
+         * Splits the given node into 2 sub nodes - children
+         * @param node
+         * @param splitPoint
+         * @param splitDir
+         * @return
+         */
         public static Node[] splitNode(Node node, int splitPoint, boolean splitDir) {
             node.children = new Node[2];
 
@@ -183,7 +193,7 @@ public class WorldTree {
 
     }
 
-    public TETile[][] generateMap(int seed) {
+    public TETile[][] generateRooms(int seed) {
         //fill the whole map with wall tiles
         fillGrid(Tileset.WALL, root.getxMin(), root.getxMax(), root.getyMin(), root.getyMax());
 
@@ -236,9 +246,14 @@ public class WorldTree {
 
         Random clearRoom = new Random(seed);
         clearGrid(root, clearRoom);
-        tileRooms(root);
+        tileNodes(root);
 
         return worldGrid;
+    }
+
+    public TETile[][] generateMap(int seed) {
+       generateRooms(seed);
+       return worldGrid;
     }
 
 
@@ -282,6 +297,12 @@ public class WorldTree {
         }
     }
 
+    /**
+     * Split grid defined by the given node
+     * @param node
+     * @param splitPoint
+     * @param splitVertical
+     */
     private void splitGridByNode(Node node, int splitPoint, boolean splitVertical) {
         if (splitVertical) {
             splitGridAtX(splitPoint, node.getyMin(), node.getyMax());
@@ -290,6 +311,13 @@ public class WorldTree {
         }
     }
 
+    /**
+     * Calculates the splitpoint
+     * @param node
+     * @param seed
+     * @param vertical
+     * @return
+     */
     private int getSplitPoint(Node node, int seed, boolean vertical) {
         if (vertical) {
             return RandomUtils.uniform(new Random(seed), node.getxMin() + Node.MIN_WIDTH, node.getxMax() - Node.MIN_WIDTH);
@@ -298,6 +326,11 @@ public class WorldTree {
          return RandomUtils.uniform(new Random(seed),node.getyMin() + Node.MIN_HEIGHT, node.getyMax() - Node.MIN_HEIGHT);
     }
 
+    /**
+     * Pseudorandomly removes some rooms from the grid - with possibility p defined by CLEAR_RATIO
+     * @param node
+     * @param clearRoom
+     */
     private void clearGrid(Node node, Random clearRoom) {
         for (Node child : node.getChildren()) {
             if (child.isLeaf() && RandomUtils.bernoulli(clearRoom, CLEAR_RATIO)) {
@@ -311,10 +344,14 @@ public class WorldTree {
         }
     }
 
-    private void tileRooms(Node node) {
+    /**
+     * Fills nodes with FLOOR tiles, while preserving the tiles on the sides(walls) - makes nodes into room
+     * @param node
+     */
+    private void tileNodes(Node node) {
         for (Node child : node.getChildren()) {
             if (!child.isLeaf()) {
-                tileRooms(child);
+                tileNodes(child);
             }
 
             if (child.isLeaf() && child.isRoom) {
