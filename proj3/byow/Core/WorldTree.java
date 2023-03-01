@@ -31,21 +31,11 @@ public class WorldTree {
     /**
      * An instance of Node defines some 2D space on the worldGrid
      */
-    private static class Node implements Comparable<Node> {
-
-        private Node parent;
+    private static class Node extends AbstractGridObject implements Comparable<Node> {
 
         public Node[] children;
 
         private TETile[][] worldGrid;
-
-        private int xMin;
-
-        private int xMax;
-
-        private int yMin;
-
-        private int yMax;
 
         public boolean isVisible;
 
@@ -119,33 +109,6 @@ public class WorldTree {
            return node.children;
         }
 
-        public int getxMin() {
-            return xMin;
-        }
-
-        public int getxMax() {
-            return xMax;
-        }
-
-        public int getyMin() {
-            return yMin;
-        }
-
-        public int getyMax() {
-            return yMax;
-        }
-
-        public int width() {
-            return xMax - xMin;
-        }
-
-        public int height() {
-            return yMax - yMin;
-        }
-
-        public int size() {
-            return width() * height();
-        }
 
         @Override
         public int compareTo(Node node) {
