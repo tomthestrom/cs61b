@@ -47,19 +47,7 @@ public class WorldTree {
 
         private int yMax;
 
-        /**
-         * If horizontal: y - coordinate
-         * If vertical: x - coordinate
-         */
-        private int splitPoint;
-
-        /**
-         * 0 horizontal
-         * 1 vertical
-         */
-        private boolean splitDir;
-
-        public boolean isRoom;
+        public boolean isVisible;
 
         static final int MIN_HEIGHT = 4;
         static final int MIN_WIDTH = 4;
@@ -118,9 +106,6 @@ public class WorldTree {
                 rightYMax = node.getyMax();
             }
 
-            node.setSplitPoint(splitPoint);
-            node.setSplitDir(splitDir);
-
            Node leftChild = new Node(node.worldGrid, leftXMin, leftXMax, leftYMin, leftYMax);
            Node rightChild = new Node(node.worldGrid, rightXMin, rightXMax, rightYMin, rightYMax);
 
@@ -148,14 +133,6 @@ public class WorldTree {
 
         public int getyMax() {
             return yMax;
-        }
-
-        public void setSplitPoint(int splitPoint) {
-            this.splitPoint = splitPoint;
-        }
-
-        public void setSplitDir(boolean splitDir) {
-            this.splitDir = splitDir;
         }
 
         public int width() {
@@ -244,8 +221,8 @@ public class WorldTree {
             timesSplit++;
         }
 
-        Random clearRoom = new Random(seed);
-        clearGrid(root, clearRoom);
+        Random leafClear = new Random(seed);
+        removeRandomLeaves(root, leafClear);
         tileNodes(root);
 
         return worldGrid;
@@ -329,17 +306,17 @@ public class WorldTree {
     /**
      * Pseudorandomly removes some rooms from the grid - with possibility p defined by CLEAR_RATIO
      * @param node
-     * @param clearRoom
+     * @param leafClear
      */
-    private void clearGrid(Node node, Random clearRoom) {
+    private void removeRandomLeaves(Node node, Random leafClear) {
         for (Node child : node.getChildren()) {
-            if (child.isLeaf() && RandomUtils.bernoulli(clearRoom, CLEAR_RATIO)) {
+            if (child.isLeaf() && RandomUtils.bernoulli(leafClear, CLEAR_RATIO)) {
                 fillGrid(Tileset.NOTHING, child.getxMin(), child.getxMax(), child.getyMin(), child.getyMax());
-                child.isRoom = false;
+                child.isVisible = false;
             } else if (child.isLeaf()) {
-               child.isRoom = true;
+               child.isVisible = true;
             } else {
-                clearGrid(child, clearRoom);
+                removeRandomLeaves(child, leafClear);
             }
         }
     }
@@ -354,7 +331,7 @@ public class WorldTree {
                 tileNodes(child);
             }
 
-            if (child.isLeaf() && child.isRoom) {
+            if (child.isLeaf() && child.isVisible) {
                 //in case the room's x/y min borders the screen beginning
                 boolean isXMinScreenSide = child.getxMin() == 0;
                 boolean isYMinScreenSide = child.getyMin() == 0;
