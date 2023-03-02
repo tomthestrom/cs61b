@@ -126,7 +126,7 @@ public class WorldTree {
 
     public List<Room> generateRooms(int seed) {
         //fill the whole map with wall tiles
-        fillGrid(Tileset.WALL, root.getxMin(), root.getxMax(), root.getyMin(), root.getyMax());
+        GridDrawer.fillRectangle(worldGrid, Tileset.WALL, root.getxMin(), root.getxMax(), root.getyMin(), root.getyMax());
 
         boolean splitVertical = seed % 2 == 0;
         int splitPoint = getSplitPoint(root, seed, splitVertical);
@@ -179,53 +179,13 @@ public class WorldTree {
         removeRandomLeaves(root, leafClear);
         tileNodes(root);
 
-        return getRooms(root);
+        return nodesToRooms(root);
     }
 
     public TETile[][] getWorldGrid() {
        return worldGrid;
     }
 
-
-    /**
-     * Fills the worldGrid between xMin, xMax, yMin, yMax
-     * @param type
-     * @param xMin
-     * @param xMax
-     * @param yMin
-     * @param yMax
-     */
-    private void fillGrid(TETile type, int xMin, int xMax, int yMin, int yMax) {
-        for (int x = xMin; x < xMax; x += 1) {
-            for (int y = yMin; y < yMax; y += 1) {
-                worldGrid [x][y] = type;
-            }
-        }
-    }
-
-    /**
-     * Fills the worldGrid with NOTHING tiles along X axis
-     * @param splitPoint
-     * @param yMin
-     * @param yMax
-     */
-    private void splitGridAtX(int splitPoint, int yMin, int yMax) {
-        for (int y = yMin; y < yMax; y += 1) {
-            worldGrid[splitPoint][y] = Tileset.NOTHING;
-        }
-    }
-
-    /**
-     * Fills the worldGrid with NOTHING tiles along Y axis
-     * @param splitPoint
-     * @param xMin
-     * @param xMax
-     */
-    private void splitGridAtY(int splitPoint, int xMin, int xMax) {
-        for (int x = xMin; x < xMax; x += 1) {
-            worldGrid[x][splitPoint] = Tileset.NOTHING;
-        }
-    }
 
     /**
      * Split grid defined by the given node
@@ -235,9 +195,9 @@ public class WorldTree {
      */
     private void splitGridByNode(Node node, int splitPoint, boolean splitVertical) {
         if (splitVertical) {
-            splitGridAtX(splitPoint, node.getyMin(), node.getyMax());
+            GridDrawer.drawLineAtX(worldGrid, Tileset.NOTHING, splitPoint, node.getyMin(), node.getyMax());
         } else {
-            splitGridAtY(splitPoint, node.getxMin(), node.getxMax());
+            GridDrawer.drawLineAtY(worldGrid, Tileset.NOTHING, splitPoint, node.getxMin(), node.getxMax());
         }
     }
 
@@ -264,7 +224,7 @@ public class WorldTree {
     private void removeRandomLeaves(Node node, Random leafClear) {
         for (Node child : node.getChildren()) {
             if (child.isLeaf() && RandomUtils.bernoulli(leafClear, CLEAR_RATIO)) {
-                fillGrid(Tileset.NOTHING, child.getxMin(), child.getxMax(), child.getyMin(), child.getyMax());
+                GridDrawer.fillRectangle(worldGrid, Tileset.NOTHING, child.getxMin(), child.getxMax(), child.getyMin(), child.getyMax());
                 child.isVisible = false;
             } else if (child.isLeaf()) {
                child.isVisible = true;
@@ -297,7 +257,8 @@ public class WorldTree {
                         child.getyMin() + DEFAULT_ROOM_WALL_WIDTH :
                         child.getyMin() + 2 * DEFAULT_ROOM_WALL_WIDTH;
 
-                fillGrid(Tileset.FLOOR,
+                GridDrawer.fillRectangle(worldGrid,
+                        Tileset.FLOOR,
                         xMin,
                         child.getxMax() - DEFAULT_ROOM_WALL_WIDTH,
                         yMin,
@@ -306,11 +267,11 @@ public class WorldTree {
         }
     }
 
-    private List<Room> getRooms(Node node) {
+    private List<Room> nodesToRooms(Node node) {
         ArrayList<Room> rooms = new ArrayList<>();
         for (Node child : node.getChildren()) {
            if (!child.isLeaf()) {
-               getRooms(child);
+               nodesToRooms(child);
            }
 
            if (child.isLeaf() && child.isVisible) {

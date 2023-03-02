@@ -43,4 +43,12 @@ abstract class AbstractGridObject {
     public int size() {
         return width() * height();
     }
+
+    public int getXCenter() {
+       return ((xMax - xMin) / 2) + xMin;
+    }
+
+    public int getYCenter() {
+        return ((yMax - yMin) / 2) + yMin;
+    }
 }
