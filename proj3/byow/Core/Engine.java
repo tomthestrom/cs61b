@@ -56,6 +56,8 @@ public class Engine {
         List<Room> rooms = worldTree.generateRooms(70);
 
         TETile[][] map = worldTree.getWorldGrid();
+
+        RoomConnector roomConnector = new RoomConnector(map, rooms);
         return map;
     }
 

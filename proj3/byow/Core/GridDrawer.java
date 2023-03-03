@@ -27,13 +27,13 @@ public final class GridDrawer {
      * Fills the worldGrid with type tiles along X axis
      * @param grid
      * @param type
-     * @param splitPoint
+     * @param x
      * @param yMin
      * @param yMax
      */
-    public static void drawLineAtX(TETile[][] grid, TETile type, int splitPoint, int yMin, int yMax) {
+    public static void drawLineAtX(TETile[][] grid, TETile type, int x, int yMin, int yMax) {
         for (int y = yMin; y < yMax; y += 1) {
-            grid[splitPoint][y] = type;
+            grid[x][y] = type;
         }
     }
 
@@ -41,13 +41,13 @@ public final class GridDrawer {
      * Fills the worldGrid with type tiles along Y axis
      * @param grid
      * @param type
-     * @param splitPoint
+     * @param y
      * @param xMin
      * @param xMax
      */
-    public static void drawLineAtY(TETile[][] grid, TETile type, int splitPoint, int xMin, int xMax) {
+    public static void drawLineAtY(TETile[][] grid, TETile type, int y, int xMin, int xMax) {
         for (int x = xMin; x < xMax; x += 1) {
-            grid[x][splitPoint] = type;
+            grid[x][y] = type;
         }
     }
 }

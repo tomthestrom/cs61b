@@ -51,4 +51,8 @@ abstract class AbstractGridObject {
     public int getYCenter() {
         return ((yMax - yMin) / 2) + yMin;
     }
+
+    public GridCoords getCenter() {
+        return new GridCoords(getXCenter(), getYCenter());
+    }
 }
