@@ -18,6 +18,11 @@ public class RoomConnector {
 
     private WeightedQuickUnionUF connectedGrid;
 
+    /**
+     * The coordinate used to check isConnected via WQU connectedGrid
+     */
+    private int connectedSentinel;
+
     public RoomConnector(TETile[][] worldGrid, List<Room> rooms) {
         this.worldGrid = worldGrid;
         this.rooms = rooms;
@@ -27,6 +32,8 @@ public class RoomConnector {
     public TETile[][] connect() {
         //designate the 0th room as the source
         Room source = rooms.get(0);
+        setConnectedSentinel(source.getCenter());
+
         distTo = new MinPQ<>(new GridSearchableDistanceComparator());
 
         for (int i = 1; i < rooms.size(); i++) {
@@ -52,4 +59,22 @@ public class RoomConnector {
 
         return worldGrid;
     }
+
+    /**
+     * Adds all the points defined by the AbstractGridObject given as parameter to the connectedGrid WQU obj
+     * @param gridObject
+     */
+    public void addToConnectedSet(AbstractGridObject gridObject) {
+       for (int x = gridObject.getxMin(); x < gridObject.getxMax(); x++) {
+           for (int y = gridObject.getyMin(); y < gridObject.getyMin(); y++) {
+              GridCoords coords = new GridCoords(x, y);
+              connectedGrid.union(connectedSentinel, GridMathUtils.coordsTo1D(coords, Engine.WIDTH));
+           }
+       }
+    }
+
+    public void setConnectedSentinel(GridCoords coords) {
+        connectedSentinel = GridMathUtils.coordsTo1D(coords, Engine.WIDTH);
+    }
+
 }

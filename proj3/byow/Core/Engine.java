@@ -58,6 +58,8 @@ public class Engine {
         TETile[][] map = worldTree.getWorldGrid();
 
         RoomConnector roomConnector = new RoomConnector(map, rooms);
+        roomConnector.connect();
+
         return map;
     }
 

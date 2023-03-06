@@ -179,7 +179,8 @@ public class WorldTree {
         removeRandomLeaves(root, leafClear);
         tileNodes(root);
 
-        return nodesToRooms(root);
+        ArrayList<Room> rooms = new ArrayList<>();
+        return nodesToRooms(root, rooms);
     }
 
     public TETile[][] getWorldGrid() {
@@ -267,11 +268,10 @@ public class WorldTree {
         }
     }
 
-    private List<Room> nodesToRooms(Node node) {
-        ArrayList<Room> rooms = new ArrayList<>();
+    private List<Room> nodesToRooms(Node node, List rooms) {
         for (Node child : node.getChildren()) {
            if (!child.isLeaf()) {
-               nodesToRooms(child);
+               nodesToRooms(child, rooms);
            }
 
            if (child.isLeaf() && child.isVisible) {
