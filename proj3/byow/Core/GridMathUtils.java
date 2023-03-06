@@ -17,4 +17,8 @@ public final class GridMathUtils {
     public static int coordsTo1D(GridCoords coords, int gridWidth) {
        return coords.y() * gridWidth + coords.x();
     }
+
+    public static int getAxisCenter(int axisMin, int axisMax) {
+        return ((axisMax - axisMin) / 2) + axisMin;
+    }
 }

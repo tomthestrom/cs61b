@@ -1,6 +1,7 @@
 package byow.Core;
 
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.MaxPQ;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
@@ -49,14 +50,33 @@ public class RoomConnector {
 
         Room closestRoom = (Room) distTo.delMin();
 
-        //check whether they overlap along x axis - if they do, one is above the other
-        //two rectangles don't overlap if A.xMin > B.xMax
-        boolean searchVertical = source.getxMin() < closestRoom.getxMax();
 
-        boolean searchAbove = source.getyMin() - closestRoom.getyMin() > 0;
+        boolean doorFound = false;
 
-        boolean searchLeft = source.getxMin() - closestRoom.getxMin() > 0;
+        GridCoords coordPointer = new GridCoords(closestRoom.getXCenter(), closestRoom.getYCenter());
+        double distance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), coordPointer);
+        int i = 0;
+        while (i < 5) {
+            GridCoords directions[] = new GridCoords[4];
+            directions[0] = coordPointer.coordAbove();
+            directions[1] = coordPointer.coordDown();
+            directions[2] = coordPointer.coordLeft();
+            directions[3] = coordPointer.coordRight();
 
+            for (GridCoords direction : directions) {
+                double dirDistance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), direction);
+
+                if (dirDistance < distance) {
+                    distance = dirDistance;
+                    coordPointer = direction;
+                }
+            }
+           worldGrid[coordPointer.x()][coordPointer.y()] = Tileset.FLOWER;
+         i += 1;
+        }
+
+        worldGrid[source.getXCenter()][source.getYCenter()] = Tileset.FLOWER;
+//        worldGrid[closestRoom.getXCenter()][closestRoom.getYCenter()] = Tileset.FLOWER;
         return worldGrid;
     }
 
