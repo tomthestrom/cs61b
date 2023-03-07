@@ -8,6 +8,8 @@ public class PathFinder implements Iterable<GridCoords>{
 
     private int pathLength;
 
+    private Direction lastMove;
+
     public PathFinder(GridCoords source, GridCoords target) {
        this.source = source;
        this.target = target;
@@ -29,14 +31,13 @@ public class PathFinder implements Iterable<GridCoords>{
         public GridCoords next() {
             double distance = GridMathUtils.euclideanDistance(target, coordPointer);
 
-                GridCoords[] directions = coordPointer.directions();
-
-                for (GridCoords direction : directions) {
-                    double dirDistance = GridMathUtils.euclideanDistance(direction, target);
+                for (Direction direction: Direction.values()) {
+                    double dirDistance = GridMathUtils.euclideanDistance(coordPointer.getNextInDirection(direction), target);
 
                     if (dirDistance < distance) {
                         distance = dirDistance;
-                        coordPointer = direction;
+                        coordPointer = coordPointer.getNextInDirection(direction);
+                        lastMove = direction;
                     }
                 }
 
@@ -49,5 +50,13 @@ public class PathFinder implements Iterable<GridCoords>{
     @Override
     public Iterator<GridCoords> iterator() {
         return new PathFinderIterator();
+    }
+
+    public int getPathLength() {
+        return pathLength;
+    }
+
+    public Direction getLastMove() {
+        return lastMove;
     }
 }
