@@ -1,11 +1,13 @@
 package byow.Core;
 
+import byow.Core.Corridor.Corridor;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.MaxPQ;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class RoomConnector {
@@ -52,6 +54,14 @@ public class RoomConnector {
         GridCoords doorCords = findDoor(closestRoom);
         closestRoom.setSource(doorCords);
         GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, doorCords);
+
+        boolean targetFound = false;
+        Corridor newCorridor = new Corridor();
+
+
+        while (!targetFound) {
+
+        }
 
 
         worldGrid[closestRoom.getXCenter()][closestRoom.getYCenter()] = Tileset.FLOWER;
