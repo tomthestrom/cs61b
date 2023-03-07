@@ -31,8 +31,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isTopLeftEdge() {
-        return grid[coords.right().x()][coords.right().y()] == Tileset.WALL &&
-                grid[coords.bottom().x()][coords.bottom().y()] == Tileset.WALL;
+        return isWall(coords.right()) &&
+                isWall(coords.bottom());
     }
 
     /**
@@ -40,8 +40,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isBottomLeftEdge() {
-        return grid[coords.right().x()][coords.right().y()] == Tileset.WALL &&
-                grid[coords.top().x()][coords.top().y()] == Tileset.WALL;
+        return isWall(coords.right()) &&
+                isWall(coords.top());
     }
 
     /**
@@ -50,8 +50,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isTopRightEdge() {
-        return grid[coords.left().x()][coords.left().y()] == Tileset.WALL &&
-                grid[coords.bottom().x()][coords.bottom().y()] == Tileset.WALL;
+        return isWall(coords.left()) &&
+                isWall(coords.bottom());
     }
 
     /**
@@ -59,8 +59,46 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isBottomRightEdge() {
-        return grid[coords.left().x()][coords.left().y()] == Tileset.WALL &&
-                grid[coords.top().x()][coords.top().y()] == Tileset.WALL;
+        return isWall(coords.left()) &&
+                isWall(coords.top());
     }
 
+    /**
+     * Is there a wall at the given coordinates?
+     * @param coords
+     * @return
+     */
+    public boolean isWall(GridCoords coords) {
+       return grid[coords.x()][coords.y()] == Tileset.WALL;
+    }
+
+    /**
+     * Is there a wall at coords?
+     * @return
+     */
+    public boolean isWall() {
+        return grid[coords.x()][coords.y()] == Tileset.WALL;
+    }
+
+    public GridCoords getClosestValidDoor(GridCoords target) {
+        GridCoords closestDoor = coords;
+
+        if (isTopLeftEdge()) {
+            closestDoor = GridMathUtils.getClosestCoord(target, coords.bottom(), coords.right());
+        }
+
+        if (isBottomLeftEdge()) {
+            closestDoor = GridMathUtils.getClosestCoord(target, coords.top(), coords.right());
+        }
+
+        if (isTopRightEdge()) {
+          closestDoor = GridMathUtils.getClosestCoord(target, coords.bottom(), coords.left());
+       }
+
+        if (isBottomRightEdge()) {
+            closestDoor = GridMathUtils.getClosestCoord(target, coords.top(), coords.left());
+        }
+
+      return  closestDoor;
+    }
 }

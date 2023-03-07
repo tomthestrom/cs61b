@@ -21,4 +21,19 @@ public final class GridMathUtils {
     public static int getAxisCenter(int axisMin, int axisMax) {
         return ((axisMax - axisMin) / 2) + axisMin;
     }
+
+    /**
+     * Returns the GridCoords obj that is closer to the target
+     * @param target
+     * @param coords1
+     * @param coords2
+     * @return
+     */
+    public static GridCoords getClosestCoord(GridCoords target, GridCoords coords1, GridCoords coords2) {
+       double dist1 = GridMathUtils.euclideanDistance(target, coords1);
+       double dist2 = GridMathUtils.euclideanDistance(target, coords2);
+
+
+       return dist1 < dist2 ? coords1 : coords2;
+    }
 }

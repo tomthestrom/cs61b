@@ -50,4 +50,8 @@ public final class GridDrawer {
             grid[x][y] = type;
         }
     }
+
+    public static void drawTileAtCoords(TETile[][] grid, TETile type, GridCoords coords) {
+        grid[coords.x()][coords.y()] = type;
+    }
 }

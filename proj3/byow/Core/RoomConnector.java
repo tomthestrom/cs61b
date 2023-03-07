@@ -49,30 +49,13 @@ public class RoomConnector {
         }
 
         Room closestRoom = (Room) distTo.delMin();
+        GridCoords doorCords = findDoor(closestRoom);
+        closestRoom.setSource(doorCords);
+        GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, doorCords);
 
 
-        boolean doorFound = false;
+        worldGrid[closestRoom.getXCenter()][closestRoom.getYCenter()] = Tileset.FLOWER;
 
-        GridCoords coordPointer = new GridCoords(closestRoom.getXCenter(), closestRoom.getYCenter());
-        double distance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), coordPointer);
-        int i = 0;
-        while (i < 5) {
-            GridCoords[] directions = coordPointer.directions();
-
-            for (GridCoords direction : directions) {
-                double dirDistance = GridMathUtils.euclideanDistance(direction, closestRoom.getTarget());
-
-                if (dirDistance < distance) {
-                    distance = dirDistance;
-                    coordPointer = direction;
-                }
-            }
-           worldGrid[coordPointer.x()][coordPointer.y()] = Tileset.FLOWER;
-         i += 1;
-        }
-
-        worldGrid[source.getXCenter()][source.getYCenter()] = Tileset.FLOWER;
-//        worldGrid[closestRoom.getXCenter()][closestRoom.getYCenter()] = Tileset.FLOWER;
         return worldGrid;
     }
 
@@ -91,6 +74,34 @@ public class RoomConnector {
 
     public void setConnectedSentinel(GridCoords coords) {
         connectedSentinel = GridMathUtils.coordsTo1D(coords, Engine.WIDTH);
+    }
+
+    public GridCoords findDoor(Room room) {
+        boolean doorFound = false;
+        GridCoords coordPointer = new GridCoords(room.getXCenter(), room.getYCenter());
+        double distance = GridMathUtils.euclideanDistance(room.getTarget(), coordPointer);
+
+        while (!doorFound) {
+            GridCoords[] directions = coordPointer.directions();
+
+            for (GridCoords direction : directions) {
+                double dirDistance = GridMathUtils.euclideanDistance(direction, room.getTarget());
+
+                if (dirDistance < distance) {
+                    distance = dirDistance;
+                    coordPointer = direction;
+                }
+            }
+
+            GridCoordsValidator gridCoordsValidator = new GridCoordsValidator(coordPointer, worldGrid);
+
+            if (gridCoordsValidator.isWall()) {
+                coordPointer = gridCoordsValidator.getClosestValidDoor(room.getTarget());
+                doorFound = true;
+            }
+        };
+
+        return coordPointer;
     }
 
 }
