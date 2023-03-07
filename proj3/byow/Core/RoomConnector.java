@@ -1,6 +1,7 @@
 package byow.Core;
 
 import byow.Core.Corridor.Corridor;
+import byow.Core.Corridor.CorridorTilePicker;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.MaxPQ;
@@ -8,6 +9,7 @@ import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class RoomConnector {
@@ -55,12 +57,34 @@ public class RoomConnector {
         closestRoom.setSource(doorCords);
         GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, doorCords);
 
+        //corridor building
         boolean targetFound = false;
         Corridor newCorridor = new Corridor();
 
 
-        while (!targetFound) {
+        GridCoords coordPointer = doorCords;
+        double distance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), coordPointer);
 
+        CorridorTilePicker.Direction curDirection;
+        CorridorTilePicker.Direction nextDirection;
+
+        while (!targetFound) {
+            GridCoords[] directions = coordPointer.directions();
+
+            for (GridCoords direction : directions) {
+                double dirDistance = GridMathUtils.euclideanDistance(direction, closestRoom.getTarget());
+
+                if (dirDistance < distance) {
+                    distance = dirDistance;
+                    coordPointer = direction;
+                }
+            }
+
+            GridCoordsValidator gridCoordsValidator = new GridCoordsValidator(coordPointer, worldGrid);
+
+            if (gridCoordsValidator.isWall()) {
+                targetFound = true;
+            }
         }
 
 
@@ -88,27 +112,22 @@ public class RoomConnector {
 
     public GridCoords findDoor(Room room) {
         boolean doorFound = false;
-        GridCoords coordPointer = new GridCoords(room.getXCenter(), room.getYCenter());
-        double distance = GridMathUtils.euclideanDistance(room.getTarget(), coordPointer);
+
+        GridCoords coordPointer = room.getCenter();
+
+        PathFinder pathFinder = new PathFinder(coordPointer, room.getTarget());
+        Iterator<GridCoords> pathFinderIterator = pathFinder.iterator();
+
 
         while (!doorFound) {
-            GridCoords[] directions = coordPointer.directions();
-
-            for (GridCoords direction : directions) {
-                double dirDistance = GridMathUtils.euclideanDistance(direction, room.getTarget());
-
-                if (dirDistance < distance) {
-                    distance = dirDistance;
-                    coordPointer = direction;
-                }
-            }
-
+            coordPointer = pathFinderIterator.next();
             GridCoordsValidator gridCoordsValidator = new GridCoordsValidator(coordPointer, worldGrid);
 
             if (gridCoordsValidator.isWall()) {
                 coordPointer = gridCoordsValidator.getClosestValidDoor(room.getTarget());
                 doorFound = true;
             }
+
         };
 
         return coordPointer;
