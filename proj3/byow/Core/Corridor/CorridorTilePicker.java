@@ -1,6 +1,7 @@
 package byow.Core.Corridor;
 
 import byow.Core.GridCoords;
+import byow.Core.Direction;
 
 public class CorridorTilePicker {
     private CorridorTile tile;
@@ -10,9 +11,6 @@ public class CorridorTilePicker {
     private Direction curDirection;
     private Direction nextDirection;
 
-    public enum Direction {
-        UP, DOWN, LEFT, RIGHT
-    }
 
     public CorridorTilePicker(GridCoords coords, Direction curDirection, Direction nextDirection) {
        this.coords = coords;

@@ -31,8 +31,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isTopLeftEdge() {
-        return isWall(coords.right()) &&
-                isWall(coords.bottom());
+        return isWall(coords.getNextInDirection(Direction.RIGHT)) &&
+                isWall(coords.getNextInDirection(Direction.DOWN));
     }
 
     /**
@@ -40,8 +40,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isBottomLeftEdge() {
-        return isWall(coords.right()) &&
-                isWall(coords.top());
+        return isWall(coords.getNextInDirection(Direction.RIGHT)) &&
+                isWall(coords.getNextInDirection(Direction.UP));
     }
 
     /**
@@ -50,8 +50,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isTopRightEdge() {
-        return isWall(coords.left()) &&
-                isWall(coords.bottom());
+        return isWall(coords.getNextInDirection(Direction.LEFT)) &&
+                isWall(coords.getNextInDirection(Direction.DOWN));
     }
 
     /**
@@ -59,8 +59,8 @@ public class GridCoordsValidator {
      * @return
      */
     public boolean isBottomRightEdge() {
-        return isWall(coords.left()) &&
-                isWall(coords.top());
+        return isWall(coords.getNextInDirection(Direction.LEFT)) &&
+                isWall(coords.getNextInDirection(Direction.UP));
     }
 
     /**
@@ -84,19 +84,27 @@ public class GridCoordsValidator {
         GridCoords closestDoor = coords;
 
         if (isTopLeftEdge()) {
-            closestDoor = GridMathUtils.getClosestCoord(target, coords.bottom(), coords.right());
+            closestDoor = GridMathUtils.getClosestCoord(target,
+                    coords.getNextInDirection(Direction.DOWN),
+                    coords.getNextInDirection(Direction.RIGHT));
         }
 
         if (isBottomLeftEdge()) {
-            closestDoor = GridMathUtils.getClosestCoord(target, coords.top(), coords.right());
+            closestDoor = GridMathUtils.getClosestCoord(target,
+                    coords.getNextInDirection(Direction.UP),
+                    coords.getNextInDirection(Direction.RIGHT));
         }
 
         if (isTopRightEdge()) {
-          closestDoor = GridMathUtils.getClosestCoord(target, coords.bottom(), coords.left());
+          closestDoor = GridMathUtils.getClosestCoord(target,
+                  coords.getNextInDirection(Direction.DOWN),
+                  coords.getNextInDirection(Direction.LEFT));
        }
 
         if (isBottomRightEdge()) {
-            closestDoor = GridMathUtils.getClosestCoord(target, coords.top(), coords.left());
+            closestDoor = GridMathUtils.getClosestCoord(target,
+                    coords.getNextInDirection(Direction.UP),
+                    coords.getNextInDirection(Direction.LEFT));
         }
 
       return  closestDoor;

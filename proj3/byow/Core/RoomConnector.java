@@ -63,28 +63,21 @@ public class RoomConnector {
 
 
         GridCoords coordPointer = doorCords;
-        double distance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), coordPointer);
 
-        CorridorTilePicker.Direction curDirection;
-        CorridorTilePicker.Direction nextDirection;
+        PathFinder corridorPathFinder = new PathFinder(doorCords, closestRoom.getTarget());
+        Iterator<GridCoords> corridorPath = corridorPathFinder.iterator();
+
+        Direction curDirection;
+        Direction nextDirection;
 
         while (!targetFound) {
-            GridCoords[] directions = coordPointer.directions();
-
-            for (GridCoords direction : directions) {
-                double dirDistance = GridMathUtils.euclideanDistance(direction, closestRoom.getTarget());
-
-                if (dirDistance < distance) {
-                    distance = dirDistance;
-                    coordPointer = direction;
-                }
-            }
-
+            coordPointer = corridorPath.next();
             GridCoordsValidator gridCoordsValidator = new GridCoordsValidator(coordPointer, worldGrid);
 
             if (gridCoordsValidator.isWall()) {
                 targetFound = true;
             }
+            worldGrid[coordPointer.x()][coordPointer.y()] = Tileset.FLOOR;
         }
 
 

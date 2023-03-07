@@ -5,28 +5,38 @@ import java.util.Objects;
 public record GridCoords(int x, int y) {
     public static int DIRECTIONS = 4;
 
-    public GridCoords top() {
+    private GridCoords top() {
         return new GridCoords(x, y + 1);
     }
 
-    public GridCoords bottom() {
+    private GridCoords bottom() {
         return new GridCoords(x, y - 1);
     }
 
-    public GridCoords left() {
+    private GridCoords left() {
         return new GridCoords(x - 1, y);
     }
-    public GridCoords right() {
+    private GridCoords right() {
         return new GridCoords(x + 1, y);
     }
 
-    public GridCoords[] directions() {
-        GridCoords[] directions = new GridCoords[DIRECTIONS];
-           directions[0] = top();
-           directions[1] = bottom();
-           directions[2] = left();
-           directions[3] = right();
+    public GridCoords getNextInDirection(Direction direction) {
+        return switch (direction) {
+            case UP -> top();
+            case DOWN -> bottom();
+            case LEFT -> left();
+            default -> right();
+        };
+    }
 
+    public GridCoords[] directions() {
+        GridCoords[] directions = new GridCoords[Direction.values().length];
+
+        int i = 0;
+        for (Direction direction: Direction.values()) {
+            directions[i] = getNextInDirection(direction);
+            i++;
+        }
            return directions;
     }
 
