@@ -53,7 +53,7 @@ public class Engine {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         WorldTree worldTree = new WorldTree(finalWorldFrame);
 
-        List<Room> rooms = worldTree.generateRooms(70);
+        List<Room> rooms = worldTree.generateRooms(71);
 
         TETile[][] map = worldTree.getWorldGrid();
 

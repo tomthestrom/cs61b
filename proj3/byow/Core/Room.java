@@ -36,4 +36,5 @@ public class Room extends AbstractGridObject implements GridSearchable {
     public double distanceFromSource() {
         return GridMathUtils.euclideanDistance(source, target);
     }
+
 }

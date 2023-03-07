@@ -26,7 +26,7 @@ public class WorldTree {
      * using RandomUtils.bernoulli with a probability of CLEAR_RATIO
      * the space will be filled with NOTHING tiles
      */
-    private static final double CLEAR_RATIO =  0.3;
+    private static final double CLEAR_RATIO =  0.7;
 
     private static final int DEFAULT_ROOM_WALL_WIDTH = 1;
 

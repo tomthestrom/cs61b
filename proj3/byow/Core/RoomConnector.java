@@ -57,14 +57,10 @@ public class RoomConnector {
         double distance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), coordPointer);
         int i = 0;
         while (i < 5) {
-            GridCoords directions[] = new GridCoords[4];
-            directions[0] = coordPointer.coordAbove();
-            directions[1] = coordPointer.coordDown();
-            directions[2] = coordPointer.coordLeft();
-            directions[3] = coordPointer.coordRight();
+            GridCoords[] directions = coordPointer.directions();
 
             for (GridCoords direction : directions) {
-                double dirDistance = GridMathUtils.euclideanDistance(closestRoom.getTarget(), direction);
+                double dirDistance = GridMathUtils.euclideanDistance(direction, closestRoom.getTarget());
 
                 if (dirDistance < distance) {
                     distance = dirDistance;
