@@ -1,6 +1,7 @@
 package byow.Core;
 
 import byow.Core.Corridor.Corridor;
+import byow.Core.Corridor.CorridorTile;
 import byow.Core.Corridor.CorridorTilePicker;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
@@ -94,9 +95,9 @@ public class RoomConnector {
 
             CorridorTilePicker corridorTilePicker = new CorridorTilePicker(currDirection.coords(), currDirection.direction(), nextDirection.direction());
             newCorridor.add(corridorTilePicker.getPickedTile());
-            System.out.println(currDirection);
-            System.out.println(nextDirection);
         }
+
+        GridDrawer.drawCorridor(worldGrid, newCorridor);
 
         worldGrid[closestRoom.getXCenter()][closestRoom.getYCenter()] = Tileset.FLOWER;
 

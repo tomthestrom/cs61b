@@ -5,4 +5,6 @@ import byow.TileEngine.TETile;
 
 public interface CorridorTile {
     public GridCoords getCoords();
+
+    public void drawTile(TETile[][] grid);
 }
