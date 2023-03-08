@@ -8,6 +8,7 @@ import edu.princeton.cs.algs4.MaxPQ;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -67,19 +68,35 @@ public class RoomConnector {
         PathFinder corridorPathFinder = new PathFinder(doorCords, closestRoom.getTarget());
         Iterator<GridCoords> corridorPath = corridorPathFinder.iterator();
 
-        Direction curDirection;
-        Direction nextDirection;
+        List<GridCoordsDirection> directionsTaken = new ArrayList<>();
 
         while (!targetFound) {
             coordPointer = corridorPath.next();
+
+            //save coordinate and move made to arrive here
+            GridCoordsDirection coordsToDirection = new GridCoordsDirection(coordPointer, corridorPathFinder.getLastMove());
+            directionsTaken.add(coordsToDirection);
+
             GridCoordsValidator gridCoordsValidator = new GridCoordsValidator(coordPointer, worldGrid);
 
             if (gridCoordsValidator.isWall()) {
                 targetFound = true;
             }
-            worldGrid[coordPointer.x()][coordPointer.y()] = Tileset.FLOOR;
+
+//            worldGrid[coordPointer.x()][coordPointer.y()] = Tileset.FLOOR;
         }
 
+
+        //build the corridor using the tile picker
+        for (int i = 0; i < directionsTaken.size() - 1; i++) {
+            GridCoordsDirection currDirection = directionsTaken.get(i);
+            GridCoordsDirection nextDirection = directionsTaken.get(i + 1);
+
+            CorridorTilePicker corridorTilePicker = new CorridorTilePicker(currDirection.coords(), currDirection.direction(), nextDirection.direction());
+            newCorridor.add(corridorTilePicker.getPickedTile());
+            System.out.println(currDirection);
+            System.out.println(nextDirection);
+        }
 
         worldGrid[closestRoom.getXCenter()][closestRoom.getYCenter()] = Tileset.FLOWER;
 
