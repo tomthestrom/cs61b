@@ -1,19 +1,35 @@
 package byow.Core;
 
+import byow.TileEngine.TETile;
+
 import java.util.Iterator;
 
 public class PathFinder implements Iterable<GridCoords>{
     GridCoords source;
     GridCoords target;
 
+    private TETile[][] grid;
     private int pathLength;
 
+    private int sameMoveSequence = 0;
+
+    public final static int MAX_SAME_MOVE_SEQUENCE = 4;
+
     private Direction lastMove;
+
+    private boolean minimizeZigZag;
 
     public PathFinder(GridCoords source, GridCoords target) {
        this.source = source;
        this.target = target;
        this.pathLength = 0;
+       this.minimizeZigZag = false;
+       this.sameMoveSequence = 0;
+    }
+
+    public void setMinimizeZigZag(TETile[][] grid, boolean minimizeZigZag) {
+        this.grid = grid;
+        this.minimizeZigZag = minimizeZigZag;
     }
 
     private class PathFinderIterator implements Iterator<GridCoords> {
@@ -22,6 +38,7 @@ public class PathFinder implements Iterable<GridCoords>{
         public PathFinderIterator() {
             coordPointer = source;
         }
+
         @Override
         public boolean hasNext() {
             return !coordPointer.equals(target);
@@ -29,20 +46,62 @@ public class PathFinder implements Iterable<GridCoords>{
 
         @Override
         public GridCoords next() {
-            double distance = GridMathUtils.euclideanDistance(target, coordPointer);
+            double startDistance = GridMathUtils.euclideanDistance(target, coordPointer);
 
-                for (Direction direction: Direction.values()) {
-                    double dirDistance = GridMathUtils.euclideanDistance(coordPointer.getNextInDirection(direction), target);
+            coordPointer = getNextCoord(startDistance, minimizeZigZag);
+            pathLength++;
+            return coordPointer;
+        }
 
-                    if (dirDistance < distance) {
-                        distance = dirDistance;
-                        coordPointer = coordPointer.getNextInDirection(direction);
-                        lastMove = direction;
-                    }
+        private GridCoords getNextCoord(double startDistance, boolean minimizeZigZag) {
+            GridCoords nextCoordPointer = coordPointer;
+
+            if (minimizeZigZag && getLastMove() != null) {
+                GridCoords nextInSameDir = coordPointer.getNextInDirection(lastMove);
+
+                double dirDistance = GridMathUtils.euclideanDistance(nextInSameDir, target);
+
+                //try going in the same direction as before, if the distance decreases, we're going there
+                if (dirDistance < startDistance && isValidMove(nextInSameDir) && sameMoveSequence < MAX_SAME_MOVE_SEQUENCE) {
+                    sameMoveSequence++;
+                    return coordPointer.getNextInDirection(lastMove);
                 }
+            }
+                return getClosestNextCoord(startDistance);
+        }
 
-                pathLength++;
-                return coordPointer;
+        private GridCoords getClosestNextCoord(double startDistance) {
+            sameMoveSequence = 0;
+
+            GridCoords nextCoordPointer = coordPointer;
+            for (Direction direction : Direction.values()) {
+                double dirDistance = GridMathUtils.euclideanDistance(coordPointer.getNextInDirection(direction), target);
+
+                if (dirDistance < startDistance) {
+                    startDistance = dirDistance;
+                    nextCoordPointer = coordPointer.getNextInDirection(direction);
+                    lastMove = direction;
+                }
+            }
+
+            return nextCoordPointer;
+        }
+
+        private boolean isValidMove(GridCoords nextCoord) {
+            if (lastMove == Direction.DOWN) {
+               return nextCoord.y() < target.y();
+            }
+
+            if (lastMove == Direction.UP) {
+                return nextCoord.y() > target.y();
+            }
+
+            if (lastMove == Direction.RIGHT) {
+                return nextCoord.x() < target.x();
+            }
+
+            //direction.left
+            return nextCoord.x() > target.x();
         }
     }
 

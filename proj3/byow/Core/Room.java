@@ -4,6 +4,7 @@ public class Room extends AbstractGridObject implements GridSearchable {
     private boolean isConnected;
     private GridCoords source;
     private GridCoords target;
+    private Room targetRoom;
 
     public Room(int xMin, int xMax, int yMin, int yMax) {
         super(xMin, xMax, yMin, yMax);
@@ -35,6 +36,13 @@ public class Room extends AbstractGridObject implements GridSearchable {
     @Override
     public double distanceFromSource() {
         return GridMathUtils.euclideanDistance(source, target);
+    }
+
+    public void setTargetRoom(Room targetRoom) {
+        this.targetRoom = targetRoom;
+    }
+    public Room getTargetRoom() {
+        return targetRoom;
     }
 
 }

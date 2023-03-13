@@ -13,6 +13,9 @@ public class Engine {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 60;
 
+    public static final int WATER_HEIGHT = (int) (HEIGHT * 0.4);
+    public static final int MOUNTAIN_START = (int) (HEIGHT * 0.85);
+
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
@@ -59,6 +62,10 @@ public class Engine {
 
         RoomConnector roomConnector = new RoomConnector(map, rooms);
         roomConnector.connect();
+//        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.WATER, 0, WATER_HEIGHT);
+//        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.TREE, WATER_HEIGHT, MOUNTAIN_START);
+//        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.MOUNTAIN, MOUNTAIN_START, HEIGHT);
+//        GridDrawer.makeIntersections(map);
 
         return map;
     }

@@ -57,6 +57,10 @@ public final class GridDrawer {
         grid[coords.x()][coords.y()] = type;
     }
 
+    public static TETile getTileAtCoords(TETile[][] grid, GridCoords coords) {
+        return grid[coords.x()][coords.y()];
+    }
+
     public static void drawTileAtMultipleCoords(TETile[][] grid, TETile type, GridCoords[] multCoords) {
         for (GridCoords coords : multCoords) {
             grid[coords.x()][coords.y()] = type;
@@ -65,7 +69,25 @@ public final class GridDrawer {
 
     public static void drawCorridor(TETile[][] grid, Corridor corridor) {
         for (CorridorTile corridorTile : corridor) {
+            System.out.println(corridorTile.getCoords());
             corridorTile.drawTile(grid);
+        }
+    }
+
+    /**
+     * Fills Nothing tiles with given tyle
+     * @param grid
+     * @param type
+     * @param minY
+     * @param maxY
+     */
+    public static void fillNothingWithTileBetweenY(TETile[][] grid, TETile type, int minY, int maxY) {
+        for (int x = 0; x < Engine.WIDTH; x += 1) {
+            for (int y = minY; y < maxY; y += 1) {
+                if (grid[x][y] == Tileset.NOTHING) {
+                    grid [x][y] = type;
+                }
+            }
         }
     }
 }

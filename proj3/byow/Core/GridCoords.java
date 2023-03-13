@@ -6,18 +6,18 @@ public record GridCoords(int x, int y) {
     public static int DIRECTIONS = 4;
 
     private GridCoords up() {
-        return new GridCoords(x, y + 1);
+        return new GridCoords(this.x, this.y + 1);
     }
 
     private GridCoords down() {
-        return new GridCoords(x, y - 1);
+        return new GridCoords(this.x, this.y - 1);
     }
 
     private GridCoords left() {
-        return new GridCoords(x - 1, y);
+        return new GridCoords(this.x - 1, this.y);
     }
     private GridCoords right() {
-        return new GridCoords(x + 1, y);
+        return new GridCoords(this.x + 1, this.y);
     }
 
     public GridCoords getNextInDirection(Direction direction) {
@@ -25,7 +25,7 @@ public record GridCoords(int x, int y) {
             case UP -> up();
             case DOWN -> down();
             case LEFT -> left();
-            default -> right();
+            case RIGHT -> right();
         };
     }
 
