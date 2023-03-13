@@ -57,7 +57,7 @@ public class Engine {
         //initially fill the world with NOTHING tiles
         GridDrawer.fillRectangle(finalWorldFrame, Tileset.NOTHING, 0, WIDTH, 0, HEIGHT);
 
-        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 123);
+        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 12);
 
         List<Room> roomList = worldTree.generateTree().getRoomsFromLeaves();
 

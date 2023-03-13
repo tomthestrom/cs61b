@@ -1,6 +1,7 @@
 package byow.Core;
 
 import byow.TileEngine.TETile;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 import java.util.Iterator;
 
@@ -13,7 +14,7 @@ public class PathFinder implements Iterable<GridCoords>{
 
     private int sameMoveSequence = 0;
 
-    public final static int MAX_SAME_MOVE_SEQUENCE = 4;
+    public final static int MAX_SAME_MOVE_SEQUENCE = 2;
 
     private Direction lastMove;
 
@@ -54,7 +55,6 @@ public class PathFinder implements Iterable<GridCoords>{
         }
 
         private GridCoords getNextCoord(double startDistance, boolean minimizeZigZag) {
-            GridCoords nextCoordPointer = coordPointer;
 
             if (minimizeZigZag && getLastMove() != null) {
                 GridCoords nextInSameDir = coordPointer.getNextInDirection(lastMove);

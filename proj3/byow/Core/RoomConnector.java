@@ -89,7 +89,21 @@ public class RoomConnector {
                 if (curCoord.equals(targetDoor)) {
                    targetFound = true;
                 }
-            }
+                WeightedQuickUnionUF roomCoordAsSet = roomCoordsAsSet(target);
+
+                for (Direction direction: Direction.values()) {
+                    if (roomCoordAsSet.connected(GridMathUtils.coordsTo1D(curCoord.getNextInDirection(direction), Engine.WIDTH), GridMathUtils.coordsTo1D(targetDoor, Engine.WIDTH))) {
+                        targetFound = true;
+
+                        GridCoordsDirection grCD = new GridCoordsDirection(curCoord.getNextInDirection(direction), direction);
+                        directionsTaken.add(grCD);
+                        GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, curCoord.getNextInDirection(direction));
+//                        GridDrawer.drawTileAtCoords(worldGrid, Tileset.WALL, targetDoor);
+                    }
+                    }
+                }
+
+
 
             corridor.build(directionsTaken);
             corridors.add(corridor);
@@ -126,6 +140,36 @@ public class RoomConnector {
               connectedGrid.union(connectedSentinel, GridMathUtils.coordsTo1D(coords, Engine.WIDTH));
            }
        }
+    }
+
+    public WeightedQuickUnionUF roomCoordsAsSet(Room room) {
+        WeightedQuickUnionUF connectedSet = new WeightedQuickUnionUF(Engine.HEIGHT * Engine.WIDTH);
+        int sentinelIndex = GridMathUtils.coordsTo1D(room.getCenter(), Engine.WIDTH);
+        for (int x = room.getxMin(); x <= room.getxMax(); x++) {
+            for (int y = room.getyMin(); y <= room.getyMin(); y++) {
+                //don't add room edges - we can't connect those with a corridor
+                //bottom left edge
+                if (x == room.getxMin() && y == room.getyMin()) {
+                    continue;
+                }
+                //bottom right edge
+                if (x == room.getxMax() && y == room.getyMin()) {
+                    continue;
+                }
+                //top left edge
+                if (x == room.getxMin() && y == room.getyMax()) {
+                    continue;
+                }
+                //top right edge
+                if (x == room.getxMax() && y == room.getyMax()) {
+                    continue;
+                }
+
+               connectedSet.union(sentinelIndex, GridMathUtils.coordsTo1D(new GridCoords(x, y), Engine.WIDTH));
+            }
+        }
+
+        return connectedSet;
     }
 
     public void setConnectedSentinel(GridCoords coords) {
