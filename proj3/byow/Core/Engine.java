@@ -65,8 +65,8 @@ public class Engine {
 
 //        TETile[][] map = worldTree.getWorldGrid();
 
-//        RoomConnector roomConnector = new RoomConnector(finalWorldFrame, roomList);
-//        roomConnector.connect();
+        RoomConnector roomConnector = new RoomConnector(finalWorldFrame, roomList);
+        roomConnector.connect();
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.WATER, 0, WATER_HEIGHT);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.TREE, WATER_HEIGHT, MOUNTAIN_START);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.MOUNTAIN, MOUNTAIN_START, HEIGHT);

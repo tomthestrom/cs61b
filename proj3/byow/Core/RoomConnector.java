@@ -23,6 +23,8 @@ public class RoomConnector {
 
     private WeightedQuickUnionUF connectedGrid;
 
+    private List<Room> disconnectedRooms;
+
     /**
      * The coordinate used to check isConnected via WQU connectedGrid
      */
@@ -30,15 +32,82 @@ public class RoomConnector {
 
     public RoomConnector(TETile[][] worldGrid, List<Room> rooms) {
         this.worldGrid = worldGrid;
+        this.disconnectedRooms = rooms;
+        distTo = new MinPQ<>(disconnectedRooms.size(), new GridSearchableDistanceComparator());
     }
 
     public TETile[][] connect() {
         List<Corridor> corridors = new ArrayList<>();
 
+        Room firstSource = disconnectedRooms.remove(0);
 
-//        for (Corridor corridor : corridors) {
-//            GridDrawer.drawCorridor(worldGrid, corridor);
-//        }
+
+        for (Room discRoom : disconnectedRooms) {
+           discRoom.setSource(discRoom.getCenter());
+           discRoom.setTarget(firstSource.getCenter());
+           discRoom.setTargetRoom(firstSource);
+
+           distTo.insert(discRoom);
+        }
+
+        int i = 0;
+        while (!distTo.isEmpty()) {
+            Room target = (Room) distTo.delMin();
+            Room source = target.getTargetRoom();
+
+            source.setSource(source.getCenter());
+            source.setTarget(target.getCenter());
+
+            GridCoords sourceDoor = findDoor(source);
+            source.setTarget(sourceDoor);
+
+
+            target.setSource(target.getCenter());
+            target.setTarget(sourceDoor);
+            GridCoords targetDoor = findDoor(target);
+            target.setSource(targetDoor);
+
+            GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, sourceDoor);
+            GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, targetDoor);
+
+            Corridor corridor = new Corridor();
+
+            PathFinder corridorPathFinder = new PathFinder(sourceDoor, targetDoor);
+            corridorPathFinder.setMinimizeZigZag(worldGrid, true);
+
+            Iterator<GridCoords> iterator = corridorPathFinder.iterator();
+
+            boolean targetFound = false;
+            List<GridCoordsDirection> directionsTaken = new ArrayList<>();
+            while (!targetFound) {
+                GridCoords curCoord = iterator.next();
+                Direction lastMove = corridorPathFinder.getLastMove();
+
+                GridCoordsDirection gridCoordsDirection = new GridCoordsDirection(curCoord, lastMove);
+                directionsTaken.add(gridCoordsDirection);
+
+                if (curCoord.equals(targetDoor)) {
+                   targetFound = true;
+                }
+            }
+
+            corridor.build(directionsTaken);
+            corridors.add(corridor);
+            i++;
+
+            for (GridSearchable discRoom : distTo) {
+                Room disconnectedRoom = (Room) discRoom;
+
+                if (GridMathUtils.euclideanDistance(disconnectedRoom.getSource(), target.getCenter()) < disconnectedRoom.distanceFromSource()) {
+                    disconnectedRoom.setTarget(target.getCenter());
+                    disconnectedRoom.setTargetRoom(target);
+                }
+            }
+        }
+
+        for (Corridor corridor : corridors) {
+            GridDrawer.drawCorridor(worldGrid, corridor);
+        }
 
 
         return worldGrid;
