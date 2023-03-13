@@ -3,9 +3,9 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import org.w3c.dom.Node;
 
 import java.util.List;
-import java.util.Random;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -54,20 +54,25 @@ public class Engine {
         // that works for many different input types.
 
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        WorldTree worldTree = new WorldTree(finalWorldFrame);
+        //initially fill the world with NOTHING tiles
+        GridDrawer.fillRectangle(finalWorldFrame, Tileset.NOTHING, 0, WIDTH, 0, HEIGHT);
 
-        List<Room> rooms = worldTree.generateRooms(71);
+        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 123);
 
-        TETile[][] map = worldTree.getWorldGrid();
+        List<Room> roomList = worldTree.generateTree().getRoomsFromLeaves();
 
-        RoomConnector roomConnector = new RoomConnector(map, rooms);
-        roomConnector.connect();
+        GridDrawer.drawRooms(finalWorldFrame, roomList);
+
+//        TETile[][] map = worldTree.getWorldGrid();
+
+//        RoomConnector roomConnector = new RoomConnector(finalWorldFrame, roomList);
+//        roomConnector.connect();
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.WATER, 0, WATER_HEIGHT);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.TREE, WATER_HEIGHT, MOUNTAIN_START);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.MOUNTAIN, MOUNTAIN_START, HEIGHT);
 //        GridDrawer.makeIntersections(map);
 
-        return map;
+        return finalWorldFrame;
     }
 
     public static void main(String[] args) {

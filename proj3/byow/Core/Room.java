@@ -6,6 +6,11 @@ public class Room extends AbstractGridObject implements GridSearchable {
     private GridCoords target;
     private Room targetRoom;
 
+    public static final int MIN_WIDTH = 4;
+    public static final int MIN_HEIGHT = 4;
+
+    public static final int WALL_WIDTH = 1;
+
     public Room(int xMin, int xMax, int yMin, int yMax) {
         super(xMin, xMax, yMin, yMax);
         isConnected = false;

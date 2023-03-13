@@ -4,6 +4,8 @@ import byow.Core.Corridor.*;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.List;
+
 public final class GridDrawer {
     private GridDrawer() {
 
@@ -88,6 +90,36 @@ public final class GridDrawer {
                     grid [x][y] = type;
                 }
             }
+        }
+    }
+
+    /**
+     * Draw a room defined by it's walls given by xmin/max ymin/max - fill with floor inbetween
+     * @param grid
+     * @param room
+     */
+    public static void drawRoom(TETile[][] grid, Room room) {
+        for (int x = room.getxMin(); x <= room.getxMax(); x++) {
+            for (int y = room.getyMin(); y <= room.getyMax(); y++) {
+                boolean fillWall = (x == room.getxMin() || x == room.getxMax()) ||
+                        (y == room.getyMin() || y == room.getyMax());
+                if (fillWall) {
+                    grid[x][y] = Tileset.WALL;
+                } else {
+                    grid[x][y] = Tileset.FLOOR;
+                }
+            }
+        }
+    }
+
+    /**
+     * Draw rooms from the list of rooms
+     * @param grid
+     * @param roomList
+     */
+    public static void drawRooms(TETile[][] grid, List<Room> roomList) {
+        for (Room room : roomList) {
+            drawRoom(grid, room);
         }
     }
 }
