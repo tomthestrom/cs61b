@@ -34,6 +34,8 @@ public class RoomConnector {
         this.worldGrid = worldGrid;
         this.disconnectedRooms = rooms;
         distTo = new MinPQ<>(disconnectedRooms.size(), new GridSearchableDistanceComparator());
+
+        connectedGrid = new WeightedQuickUnionUF(Engine.WIDTH * Engine.HEIGHT);
     }
 
     public TETile[][] connect() {
@@ -68,12 +70,12 @@ public class RoomConnector {
             target.setSource(targetDoor);
 
             GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, sourceDoor);
-            GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, targetDoor);
+//            GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, target.getCenter());
 
             Corridor corridor = new Corridor();
 
             PathFinder corridorPathFinder = new PathFinder(sourceDoor, targetDoor);
-            corridorPathFinder.setMinimizeZigZag(worldGrid, true);
+            corridorPathFinder.minimizeZigZag();
 
             Iterator<GridCoords> iterator = corridorPathFinder.iterator();
 
@@ -88,19 +90,20 @@ public class RoomConnector {
 
                 if (curCoord.equals(targetDoor)) {
                    targetFound = true;
+                   GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, curCoord);
                 }
-                WeightedQuickUnionUF roomCoordAsSet = roomCoordsAsSet(target);
-
-                for (Direction direction: Direction.values()) {
-                    if (roomCoordAsSet.connected(GridMathUtils.coordsTo1D(curCoord.getNextInDirection(direction), Engine.WIDTH), GridMathUtils.coordsTo1D(targetDoor, Engine.WIDTH))) {
-                        targetFound = true;
-
-                        GridCoordsDirection grCD = new GridCoordsDirection(curCoord.getNextInDirection(direction), direction);
-                        directionsTaken.add(grCD);
-                        GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, curCoord.getNextInDirection(direction));
-//                        GridDrawer.drawTileAtCoords(worldGrid, Tileset.WALL, targetDoor);
-                    }
-                    }
+//                WeightedQuickUnionUF roomCoordAsSet = roomCoordsAsSet(target);
+//
+//                for (Direction direction: Direction.values()) {
+//                    if (connectedGrid.connected(GridMathUtils.coordsTo1D(curCoord.getNextInDirection(direction), Engine.WIDTH), GridMathUtils.coordsTo1D(target.getCenter(), Engine.WIDTH))) {
+//                        targetFound = true;
+//
+//                        GridCoordsDirection grCD = new GridCoordsDirection(curCoord.getNextInDirection(direction), direction);
+//                        directionsTaken.add(grCD);
+//                        GridDrawer.drawTileAtCoords(worldGrid, Tileset.FLOOR, curCoord.getNextInDirection(direction));
+////                        GridDrawer.drawTileAtCoords(worldGrid, Tileset.WALL, targetDoor);
+//                    }
+//                    }
                 }
 
 
@@ -117,6 +120,8 @@ public class RoomConnector {
                     disconnectedRoom.setTargetRoom(target);
                 }
             }
+
+//            addToConnectedSet(source);
         }
 
         for (Corridor corridor : corridors) {
@@ -140,6 +145,10 @@ public class RoomConnector {
               connectedGrid.union(connectedSentinel, GridMathUtils.coordsTo1D(coords, Engine.WIDTH));
            }
        }
+    }
+
+    public boolean isCoordInConnectedSet(GridCoords coord) {
+        return connectedGrid.connected(GridMathUtils.coordsTo1D(coord, Engine.WIDTH), connectedSentinel);
     }
 
     public WeightedQuickUnionUF roomCoordsAsSet(Room room) {

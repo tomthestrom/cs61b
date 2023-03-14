@@ -33,7 +33,12 @@ public class LeftToBottom implements CorridorTile {
 
         GridCoords[] wallCoords = {wallLeft, wallAbove, wallCorner};
 
+        for (GridCoords wallCoord : wallCoords) {
+            if (GridDrawer.getTileAtCoords(grid, wallCoord) != Tileset.FLOOR) {
+                GridDrawer.drawTileAtCoords(grid, Tileset.WALL, wallCoord);
+            }
+        }
+
         GridDrawer.drawTileAtCoords(grid, Tileset.FLOOR, floor);
-        GridDrawer.drawTileAtMultipleCoords(grid, Tileset.WALL, wallCoords);
     }
 }

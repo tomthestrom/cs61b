@@ -57,7 +57,7 @@ public class Engine {
         //initially fill the world with NOTHING tiles
         GridDrawer.fillRectangle(finalWorldFrame, Tileset.NOTHING, 0, WIDTH, 0, HEIGHT);
 
-        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 12);
+        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 1);
 
         List<Room> roomList = worldTree.generateTree().getRoomsFromLeaves();
 
@@ -67,6 +67,7 @@ public class Engine {
 
         RoomConnector roomConnector = new RoomConnector(finalWorldFrame, roomList);
         roomConnector.connect();
+        GridDrawer.mapPostProcessor(finalWorldFrame);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.WATER, 0, WATER_HEIGHT);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.TREE, WATER_HEIGHT, MOUNTAIN_START);
 //        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.MOUNTAIN, MOUNTAIN_START, HEIGHT);
