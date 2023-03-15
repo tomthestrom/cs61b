@@ -59,7 +59,7 @@ public class Engine {
         GridDrawer.fillRectangle(finalWorldFrame, Tileset.NOTHING, 0, WIDTH, 0, HEIGHT);
 
         //the seed based on which the pseudorandom map is generated
-        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 1);
+        BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 1234);
 
         List<Room> roomList = worldTree.generateTree().getRoomsFromLeaves();
 

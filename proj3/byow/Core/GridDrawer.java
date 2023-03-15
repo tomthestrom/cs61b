@@ -123,8 +123,8 @@ public final class GridDrawer {
     }
 
     /**
-     * Removes walls between corridors that are parallel
-     * Some maps get rendered with a 1 or 2 NOTHING tiles instead of a WALL tile -> HOTFIX
+     * Removes wall tiles that sometimes appear around the door - estetic fix
+     * Some maps get rendered with 1 or 2 NOTHING tiles instead of a WALL tile, pathfinding -> HOTFIX
      * Well, remove walls first, than check for NOTHING tiles, in case remove walls screws something up :)
      * @param grid
      */
@@ -149,24 +149,6 @@ public final class GridDrawer {
                 if (getTileAtCoords(grid, up) == Tileset.FLOOR &&
                         getTileAtCoords(grid, down) == Tileset.FLOOR) {
                     drawTileAtCoords(grid, Tileset.FLOOR, curCoords);
-                }
-                //in case there are two walls next to each other - remove them
-                GridCoords rightOfRight =  right.getNextInDirection(Direction.RIGHT);
-                GridCoords upOfUp =  up.getNextInDirection(Direction.UP);
-                if (getTileAtCoords(grid, right) == Tileset.WALL &&
-                        getTileAtCoords(grid, rightOfRight) == Tileset.WALL &&
-                        getTileAtCoords(grid, rightOfRight.getNextInDirection(Direction.RIGHT)) == Tileset.FLOOR) {
-                    //remove both walls
-                    drawTileAtCoords(grid, Tileset.FLOOR, right);
-                    drawTileAtCoords(grid, Tileset.FLOOR, rightOfRight);
-                }
-
-                if (getTileAtCoords(grid, up) == Tileset.WALL &&
-                        getTileAtCoords(grid, upOfUp) == Tileset.WALL &&
-                        getTileAtCoords(grid, upOfUp.getNextInDirection(Direction.UP)) == Tileset.FLOOR) {
-                    //remove both walls
-                    drawTileAtCoords(grid, Tileset.FLOOR, up);
-                    drawTileAtCoords(grid, Tileset.FLOOR, upOfUp);
                 }
             } else if (getTileAtCoords(grid, curCoords) == Tileset.FLOOR) {
 
