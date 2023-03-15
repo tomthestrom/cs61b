@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 
 import java.util.List;
 
+//@TODO: MOVE MAP GENERATION elsewhere, IMPLEMENT INTERACT WITH KEYBOARD, INTERACT WITH INPUT STRING
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -57,21 +58,17 @@ public class Engine {
         //initially fill the world with NOTHING tiles
         GridDrawer.fillRectangle(finalWorldFrame, Tileset.NOTHING, 0, WIDTH, 0, HEIGHT);
 
+        //the seed based on which the pseudorandom map is generated
         BSPTree worldTree = new BSPTree(WIDTH, HEIGHT, 1);
 
         List<Room> roomList = worldTree.generateTree().getRoomsFromLeaves();
 
         GridDrawer.drawRooms(finalWorldFrame, roomList);
 
-//        TETile[][] map = worldTree.getWorldGrid();
 
         RoomConnector roomConnector = new RoomConnector(finalWorldFrame, roomList);
         roomConnector.connect();
         GridDrawer.mapPostProcessor(finalWorldFrame);
-//        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.WATER, 0, WATER_HEIGHT);
-//        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.TREE, WATER_HEIGHT, MOUNTAIN_START);
-//        GridDrawer.fillNothingWithTileBetweenY(map, Tileset.MOUNTAIN, MOUNTAIN_START, HEIGHT);
-//        GridDrawer.makeIntersections(map);
 
         return finalWorldFrame;
     }
