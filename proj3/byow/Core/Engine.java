@@ -94,6 +94,6 @@ public class Engine {
     public static void main(String[] args) {
         Engine eng = new Engine();
         eng.ter.initialize(WIDTH, HEIGHT);
-        eng.ter.renderFrame(eng.interactWithInputString("N23S"));
+        eng.ter.renderFrame(eng.interactWithInputString("N12345S"));
     }
 }
