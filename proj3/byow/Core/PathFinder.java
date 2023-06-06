@@ -1,9 +1,5 @@
 package byow.Core;
 
-import byow.TileEngine.TETile;
-import byow.TileEngine.Tileset;
-import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-
 import java.util.Iterator;
 
 public class PathFinder implements Iterable<GridCoords>{

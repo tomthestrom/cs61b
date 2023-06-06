@@ -4,7 +4,6 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import java.util.regex.*;
-import org.w3c.dom.Node;
 
 import java.util.List;
 
